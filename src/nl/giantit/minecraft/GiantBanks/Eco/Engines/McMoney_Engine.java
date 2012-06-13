@@ -1,7 +1,7 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco.Engines;
+package nl.giantit.minecraft.GiantBanks.Eco.Engines;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.Eco.iEco;
+import nl.giantit.minecraft.GiantBanks.Eco.iEco;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -13,26 +13,31 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Level;
 
-import com.iConomy.iConomy;
+import boardinggamer.mcmoney.McMoneyAPI;
 
 /**
  *
  * @author Giant
  */
-public class ic5_Engine implements iEco {
+public class McMoney_Engine implements iEco {
 	
 	private GiantBanks plugin;
-	private iConomy eco;
+	private McMoneyAPI eco = null;
 	
-	public ic5_Engine(GiantBanks plugin) {
+	public McMoney_Engine(GiantBanks plugin) {
 		this.plugin = plugin;
 		Bukkit.getServer().getPluginManager().registerEvents(new EcoListener(this), plugin);
+		
 		if(eco == null) {
-			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("iConomy");
+			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("McMoney");
 
-			if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getClass().getName().equals("com.iConomy.iConomy")) {
-				eco = (iConomy) ecoEn;
-				plugin.getLogger().log(Level.INFO, "Succesfully hooked into iConomy 5!");
+			if(ecoEn != null && ecoEn.isEnabled()) {
+				eco = McMoneyAPI.getInstance();
+				if(eco == null) {
+					plugin.getLogger().log(Level.WARNING, "Failed to hook into McMoney!");
+				}else{
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into McMoney!");
+				}
 			}
 		}
 	}
@@ -49,7 +54,7 @@ public class ic5_Engine implements iEco {
 	
 	@Override
 	public double getBalance(String player) {
-		return eco.getAccount(player).getHoldings().balance();
+		return eco.getMoney(player);
 	}
 	
 	@Override
@@ -60,13 +65,12 @@ public class ic5_Engine implements iEco {
 	@Override
 	public boolean withdraw(String player, double amount) {
 		if(amount > 0) {
-			double balance = eco.getAccount(player).getHoldings().balance();
-			if((balance - amount) >= 0) {
-				eco.getAccount(player).getHoldings().subtract(amount);
+			if((eco.getMoney(player) - amount) > 0) {
+				eco.removeMoney(player, amount);
 				return true;
 			}
 		}
-		
+					
 		return false;
 	}
 	
@@ -78,27 +82,28 @@ public class ic5_Engine implements iEco {
 	@Override
 	public boolean deposit(String player, double amount) {
 		if(amount > 0) {
-			eco.getAccount(player).getHoldings().add(amount);
+			eco.addMoney(player, amount);
 			return true;
 		}
+		
 		return false;
 	}
 	
 	public class EcoListener implements Listener {
-		private ic5_Engine eco;
+		private McMoney_Engine eco;
 		
-		public EcoListener(ic5_Engine eco) {
+		public EcoListener(McMoney_Engine eco) {
 			this.eco = eco;
 		}
 		
 		@EventHandler()
 		public void onPluginEnable(PluginEnableEvent event) {
 			if(eco.eco == null) {
-				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("iConomy");
+				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("McMoney");
 				
-				if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getClass().getName().equals("com.iConomy.iConomy")) {
-					eco.eco = (iConomy) ecoEn;
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into iConomy 5!");
+				if(ecoEn != null && ecoEn.isEnabled()) {
+					eco.eco = McMoneyAPI.getInstance();
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into McMoney!");
 				}
 			}
 		}
@@ -106,9 +111,9 @@ public class ic5_Engine implements iEco {
 		@EventHandler()
 		public void onPluginDisable(PluginDisableEvent event) {
 			if(eco.eco != null) {
-				if(event.getPlugin().getDescription().getName().equals("iConomy")) {
+				if(event.getPlugin().getDescription().getName().equals("McMoney")) {
 					eco.eco = null;
-					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into iConomy 5!");
+					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into McMoney!");
 				}
 			}
 		}

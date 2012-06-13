@@ -1,4 +1,4 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco;
+package nl.giantit.minecraft.GiantBanks.Eco;
 
 import org.bukkit.entity.Player;
 /**

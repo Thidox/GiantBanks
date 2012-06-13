@@ -1,7 +1,7 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco.Engines;
+package nl.giantit.minecraft.GiantBanks.Eco.Engines;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.Eco.iEco;
+import nl.giantit.minecraft.GiantBanks.Eco.iEco;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -13,26 +13,26 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Level;
 
-import cosine.boseconomy.BOSEconomy;
+import com.iConomy.iConomy;
 
 /**
  *
  * @author Giant
  */
-public class bose7_Engine implements iEco {
+public class ic5_Engine implements iEco {
 	
 	private GiantBanks plugin;
-	private BOSEconomy eco;
+	private iConomy eco;
 	
-	public bose7_Engine(GiantBanks plugin) {
+	public ic5_Engine(GiantBanks plugin) {
 		this.plugin = plugin;
 		Bukkit.getServer().getPluginManager().registerEvents(new EcoListener(this), plugin);
 		if(eco == null) {
-			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("BOSEconomy");
+			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("iConomy");
 
-			if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getDescription().getVersion().startsWith("0.7")) {
-				eco = (BOSEconomy) ecoEn;
-				plugin.getLogger().log(Level.INFO, "Succesfully hooked into BOSEconomy 7!");
+			if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getClass().getName().equals("com.iConomy.iConomy")) {
+				eco = (iConomy) ecoEn;
+				plugin.getLogger().log(Level.INFO, "Succesfully hooked into iConomy 5!");
 			}
 		}
 	}
@@ -49,7 +49,7 @@ public class bose7_Engine implements iEco {
 	
 	@Override
 	public double getBalance(String player) {
-		return eco.getPlayerMoneyDouble(player);
+		return eco.getAccount(player).getHoldings().balance();
 	}
 	
 	@Override
@@ -60,8 +60,11 @@ public class bose7_Engine implements iEco {
 	@Override
 	public boolean withdraw(String player, double amount) {
 		if(amount > 0) {
-			double balance = eco.getPlayerMoneyDouble(player);
-			return eco.setPlayerMoney(player, (balance - amount), true);
+			double balance = eco.getAccount(player).getHoldings().balance();
+			if((balance - amount) >= 0) {
+				eco.getAccount(player).getHoldings().subtract(amount);
+				return true;
+			}
 		}
 		
 		return false;
@@ -75,27 +78,27 @@ public class bose7_Engine implements iEco {
 	@Override
 	public boolean deposit(String player, double amount) {
 		if(amount > 0) {
-			return eco.addPlayerMoney(player, amount, true);
+			eco.getAccount(player).getHoldings().add(amount);
+			return true;
 		}
-		
 		return false;
 	}
 	
 	public class EcoListener implements Listener {
-		private bose7_Engine eco;
+		private ic5_Engine eco;
 		
-		public EcoListener(bose7_Engine eco) {
+		public EcoListener(ic5_Engine eco) {
 			this.eco = eco;
 		}
 		
 		@EventHandler()
 		public void onPluginEnable(PluginEnableEvent event) {
 			if(eco.eco == null) {
-				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("BOSEconomy");
+				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("iConomy");
 				
-				if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getDescription().getVersion().startsWith("0.7")) {
-					eco.eco = (BOSEconomy) ecoEn;
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into BOSEconomy 7!");
+				if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getClass().getName().equals("com.iConomy.iConomy")) {
+					eco.eco = (iConomy) ecoEn;
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into iConomy 5!");
 				}
 			}
 		}
@@ -103,9 +106,9 @@ public class bose7_Engine implements iEco {
 		@EventHandler()
 		public void onPluginDisable(PluginDisableEvent event) {
 			if(eco.eco != null) {
-				if(event.getPlugin().getDescription().getName().equals("BOSEconomy")) {
+				if(event.getPlugin().getDescription().getName().equals("iConomy")) {
 					eco.eco = null;
-					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into BOSEconomy 7!");
+					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into iConomy 5!");
 				}
 			}
 		}

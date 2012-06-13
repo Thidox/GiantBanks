@@ -1,7 +1,7 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco.Engines;
+package nl.giantit.minecraft.GiantBanks.Eco.Engines;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.Eco.iEco;
+import nl.giantit.minecraft.GiantBanks.Eco.iEco;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

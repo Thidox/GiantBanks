@@ -1,7 +1,7 @@
 package nl.giantit.minecraft.GiantBanks.core.Tools.db.Handler;
 
-import nl.giantit.minecraft.GiantBanks.core.Bank.AccountType;
-import nl.giantit.minecraft.GiantBanks.core.Bank.UserAccount;
+import nl.giantit.minecraft.GiantBanks.Bank.AccountType;
+import nl.giantit.minecraft.GiantBanks.Bank.UserAccount;
 import nl.giantit.minecraft.GiantBanks.core.Database.Database;
 import nl.giantit.minecraft.GiantBanks.core.Database.drivers.iDriver;
 

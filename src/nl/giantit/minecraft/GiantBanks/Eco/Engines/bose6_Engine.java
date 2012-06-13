@@ -1,7 +1,7 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco.Engines;
+package nl.giantit.minecraft.GiantBanks.Eco.Engines;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.Eco.iEco;
+import nl.giantit.minecraft.GiantBanks.Eco.iEco;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -13,33 +13,28 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Level;
 
-import me.greatman.Craftconomy.Craftconomy;
-import me.greatman.Craftconomy.Account;
-import me.greatman.Craftconomy.AccountHandler;
+import cosine.boseconomy.BOSEconomy;
 
 /**
  *
  * @author Giant
  */
-public class Craftconomy_Engine implements iEco {
+@SuppressWarnings("deprecation")
+public class bose6_Engine implements iEco {
 	
 	private GiantBanks plugin;
-	private Craftconomy eco = null;
+	private BOSEconomy eco;
 	
-	public Craftconomy_Engine(GiantBanks plugin) {
+	public bose6_Engine(GiantBanks plugin) {
 		this.plugin = plugin;
 		Bukkit.getServer().getPluginManager().registerEvents(new EcoListener(this), plugin);
-		
+		plugin.getLogger().log(Level.WARNING, "BOSEconomy 6 is HEAVILY outdated please upgrade!");
 		if(eco == null) {
-			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("Craftconomy");
+			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("BOSEconomy");
 
-			if(ecoEn != null && ecoEn.isEnabled()) {
-				eco = (Craftconomy) ecoEn;
-				if(eco == null) {
-					plugin.getLogger().log(Level.WARNING, "Failed to hook into Craftconomy!");
-				}else{
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into Craftconomy!");
-				}
+			if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getDescription().getVersion().startsWith("0.6")) {
+				eco = (BOSEconomy) ecoEn;
+				plugin.getLogger().log(Level.INFO, "Succesfully hooked into BOSEconomy 6!");
 			}
 		}
 	}
@@ -56,8 +51,7 @@ public class Craftconomy_Engine implements iEco {
 	
 	@Override
 	public double getBalance(String player) {
-		Account acc = AccountHandler.getAccount(player);
-		return acc.getDefaultBalance();
+		return (double) eco.getPlayerMoney(player);
 	}
 	
 	@Override
@@ -68,11 +62,8 @@ public class Craftconomy_Engine implements iEco {
 	@Override
 	public boolean withdraw(String player, double amount) {
 		if(amount > 0) {
-			Account acc = AccountHandler.getAccount(player);
-			if(acc.hasEnough(amount)) {
-				acc.substractMoney(amount);
-				return true;
-			}
+			double balance = eco.getPlayerMoneyDouble(player);
+			return eco.setPlayerMoney(player, (int) (balance - Math.round(amount)), true);
 		}
 		
 		return false;
@@ -86,29 +77,27 @@ public class Craftconomy_Engine implements iEco {
 	@Override
 	public boolean deposit(String player, double amount) {
 		if(amount > 0) {
-			Account acc = AccountHandler.getAccount(player);
-			acc.addMoney(amount);
-			return true;
+			return eco.addPlayerMoney(player, (int) Math.round(amount), true);
 		}
 		
 		return false;
 	}
 	
 	public class EcoListener implements Listener {
-		private Craftconomy_Engine eco;
+		private bose6_Engine eco;
 		
-		public EcoListener(Craftconomy_Engine eco) {
+		public EcoListener(bose6_Engine eco) {
 			this.eco = eco;
 		}
 		
 		@EventHandler()
 		public void onPluginEnable(PluginEnableEvent event) {
 			if(eco.eco == null) {
-				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("Craftconomy");
+				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("BOSEconomy");
 				
-				if(ecoEn != null && ecoEn.isEnabled()) {
-					eco.eco = (Craftconomy) ecoEn;
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into Craftconomy!");
+				if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getDescription().getVersion().startsWith("0.6")) {
+					eco.eco = (BOSEconomy) ecoEn;
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into BOSEconomy 6!");
 				}
 			}
 		}
@@ -116,9 +105,9 @@ public class Craftconomy_Engine implements iEco {
 		@EventHandler()
 		public void onPluginDisable(PluginDisableEvent event) {
 			if(eco.eco != null) {
-				if(event.getPlugin().getDescription().getName().equals("Craftconomy")) {
+				if(event.getPlugin().getDescription().getName().equals("BOSEconomy")) {
 					eco.eco = null;
-					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into Craftconomy!");
+					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into BOSEconomy 6!");
 				}
 			}
 		}

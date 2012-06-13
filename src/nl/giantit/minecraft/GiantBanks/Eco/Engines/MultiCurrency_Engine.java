@@ -1,7 +1,7 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco.Engines;
+package nl.giantit.minecraft.GiantBanks.Eco.Engines;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.Eco.iEco;
+import nl.giantit.minecraft.GiantBanks.Eco.iEco;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -13,28 +13,32 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Level;
 
-import cosine.boseconomy.BOSEconomy;
+import me.ashtheking.currency.Currency;
+import me.ashtheking.currency.CurrencyList;
 
 /**
  *
  * @author Giant
  */
-@SuppressWarnings("deprecation")
-public class bose6_Engine implements iEco {
+public class MultiCurrency_Engine implements iEco {
 	
 	private GiantBanks plugin;
-	private BOSEconomy eco;
+	private Currency eco = null;
 	
-	public bose6_Engine(GiantBanks plugin) {
+	public MultiCurrency_Engine(GiantBanks plugin) {
 		this.plugin = plugin;
 		Bukkit.getServer().getPluginManager().registerEvents(new EcoListener(this), plugin);
-		plugin.getLogger().log(Level.WARNING, "BOSEconomy 6 is HEAVILY outdated please upgrade!");
+		
 		if(eco == null) {
-			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("BOSEconomy");
+			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("MultiCurrency");
 
-			if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getDescription().getVersion().startsWith("0.6")) {
-				eco = (BOSEconomy) ecoEn;
-				plugin.getLogger().log(Level.INFO, "Succesfully hooked into BOSEconomy 6!");
+			if(ecoEn != null && ecoEn.isEnabled()) {
+				eco = (Currency) ecoEn;
+				if(eco == null) {
+					plugin.getLogger().log(Level.WARNING, "Failed to hook into MultiCurrency!");
+				}else{
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into MultiCurrency!");
+				}
 			}
 		}
 	}
@@ -51,7 +55,7 @@ public class bose6_Engine implements iEco {
 	
 	@Override
 	public double getBalance(String player) {
-		return (double) eco.getPlayerMoney(player);
+		return CurrencyList.getValue((String) CurrencyList.maxCurrency(player)[0], player);
 	}
 	
 	@Override
@@ -62,10 +66,12 @@ public class bose6_Engine implements iEco {
 	@Override
 	public boolean withdraw(String player, double amount) {
 		if(amount > 0) {
-			double balance = eco.getPlayerMoneyDouble(player);
-			return eco.setPlayerMoney(player, (int) (balance - Math.round(amount)), true);
+			if(CurrencyList.hasEnough(player, amount)) {
+				CurrencyList.subtract(player, amount);
+				return true;
+			}
 		}
-		
+					
 		return false;
 	}
 	
@@ -77,27 +83,28 @@ public class bose6_Engine implements iEco {
 	@Override
 	public boolean deposit(String player, double amount) {
 		if(amount > 0) {
-			return eco.addPlayerMoney(player, (int) Math.round(amount), true);
+			CurrencyList.add(player, amount);
+			return true;
 		}
 		
 		return false;
 	}
 	
 	public class EcoListener implements Listener {
-		private bose6_Engine eco;
+		private MultiCurrency_Engine eco;
 		
-		public EcoListener(bose6_Engine eco) {
+		public EcoListener(MultiCurrency_Engine eco) {
 			this.eco = eco;
 		}
 		
 		@EventHandler()
 		public void onPluginEnable(PluginEnableEvent event) {
 			if(eco.eco == null) {
-				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("BOSEconomy");
+				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("MultiCurrency");
 				
-				if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getDescription().getVersion().startsWith("0.6")) {
-					eco.eco = (BOSEconomy) ecoEn;
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into BOSEconomy 6!");
+				if(ecoEn != null && ecoEn.isEnabled()) {
+					eco.eco = (Currency) ecoEn;
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into MultiCurrency!");
 				}
 			}
 		}
@@ -105,9 +112,9 @@ public class bose6_Engine implements iEco {
 		@EventHandler()
 		public void onPluginDisable(PluginDisableEvent event) {
 			if(eco.eco != null) {
-				if(event.getPlugin().getDescription().getName().equals("BOSEconomy")) {
+				if(event.getPlugin().getDescription().getName().equals("MultiCurrency")) {
 					eco.eco = null;
-					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into BOSEconomy 6!");
+					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into MultiCurrency!");
 				}
 			}
 		}

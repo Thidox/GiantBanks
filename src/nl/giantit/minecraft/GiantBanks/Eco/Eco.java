@@ -1,9 +1,7 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco;
+package nl.giantit.minecraft.GiantBanks.Eco;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.Eco.Engines.*;
-
-import java.util.logging.Level;
+import nl.giantit.minecraft.GiantBanks.Eco.Engines.*;
 
 /**
  *

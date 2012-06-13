@@ -1,7 +1,7 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco.Engines;
+package nl.giantit.minecraft.GiantBanks.Eco.Engines;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.Eco.iEco;
+import nl.giantit.minecraft.GiantBanks.Eco.iEco;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -13,31 +13,32 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Level;
 
-import me.ashtheking.currency.Currency;
-import me.ashtheking.currency.CurrencyList;
+import me.greatman.Craftconomy.Craftconomy;
+import me.greatman.Craftconomy.Account;
+import me.greatman.Craftconomy.AccountHandler;
 
 /**
  *
  * @author Giant
  */
-public class MultiCurrency_Engine implements iEco {
+public class Craftconomy_Engine implements iEco {
 	
 	private GiantBanks plugin;
-	private Currency eco = null;
+	private Craftconomy eco = null;
 	
-	public MultiCurrency_Engine(GiantBanks plugin) {
+	public Craftconomy_Engine(GiantBanks plugin) {
 		this.plugin = plugin;
 		Bukkit.getServer().getPluginManager().registerEvents(new EcoListener(this), plugin);
 		
 		if(eco == null) {
-			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("MultiCurrency");
+			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("Craftconomy");
 
 			if(ecoEn != null && ecoEn.isEnabled()) {
-				eco = (Currency) ecoEn;
+				eco = (Craftconomy) ecoEn;
 				if(eco == null) {
-					plugin.getLogger().log(Level.WARNING, "Failed to hook into MultiCurrency!");
+					plugin.getLogger().log(Level.WARNING, "Failed to hook into Craftconomy!");
 				}else{
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into MultiCurrency!");
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into Craftconomy!");
 				}
 			}
 		}
@@ -55,7 +56,8 @@ public class MultiCurrency_Engine implements iEco {
 	
 	@Override
 	public double getBalance(String player) {
-		return CurrencyList.getValue((String) CurrencyList.maxCurrency(player)[0], player);
+		Account acc = AccountHandler.getAccount(player);
+		return acc.getDefaultBalance();
 	}
 	
 	@Override
@@ -66,12 +68,13 @@ public class MultiCurrency_Engine implements iEco {
 	@Override
 	public boolean withdraw(String player, double amount) {
 		if(amount > 0) {
-			if(CurrencyList.hasEnough(player, amount)) {
-				CurrencyList.subtract(player, amount);
+			Account acc = AccountHandler.getAccount(player);
+			if(acc.hasEnough(amount)) {
+				acc.substractMoney(amount);
 				return true;
 			}
 		}
-					
+		
 		return false;
 	}
 	
@@ -83,7 +86,8 @@ public class MultiCurrency_Engine implements iEco {
 	@Override
 	public boolean deposit(String player, double amount) {
 		if(amount > 0) {
-			CurrencyList.add(player, amount);
+			Account acc = AccountHandler.getAccount(player);
+			acc.addMoney(amount);
 			return true;
 		}
 		
@@ -91,20 +95,20 @@ public class MultiCurrency_Engine implements iEco {
 	}
 	
 	public class EcoListener implements Listener {
-		private MultiCurrency_Engine eco;
+		private Craftconomy_Engine eco;
 		
-		public EcoListener(MultiCurrency_Engine eco) {
+		public EcoListener(Craftconomy_Engine eco) {
 			this.eco = eco;
 		}
 		
 		@EventHandler()
 		public void onPluginEnable(PluginEnableEvent event) {
 			if(eco.eco == null) {
-				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("MultiCurrency");
+				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("Craftconomy");
 				
 				if(ecoEn != null && ecoEn.isEnabled()) {
-					eco.eco = (Currency) ecoEn;
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into MultiCurrency!");
+					eco.eco = (Craftconomy) ecoEn;
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into Craftconomy!");
 				}
 			}
 		}
@@ -112,9 +116,9 @@ public class MultiCurrency_Engine implements iEco {
 		@EventHandler()
 		public void onPluginDisable(PluginDisableEvent event) {
 			if(eco.eco != null) {
-				if(event.getPlugin().getDescription().getName().equals("MultiCurrency")) {
+				if(event.getPlugin().getDescription().getName().equals("Craftconomy")) {
 					eco.eco = null;
-					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into MultiCurrency!");
+					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into Craftconomy!");
 				}
 			}
 		}

@@ -1,7 +1,7 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco.Engines;
+package nl.giantit.minecraft.GiantBanks.Eco.Engines;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.Eco.iEco;
+import nl.giantit.minecraft.GiantBanks.Eco.iEco;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -11,32 +11,43 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Method;
 import java.util.logging.Level;
 
-import boardinggamer.mcmoney.McMoneyAPI;
+import org.neocraft.AEco.AEco;
 
 /**
  *
  * @author Giant
  */
-public class McMoney_Engine implements iEco {
+public class AEco_Engine implements iEco {
 	
 	private GiantBanks plugin;
-	private McMoneyAPI eco = null;
+	private org.neocraft.AEco.part.Economy.Economy eco = null;
+	private Method createWallet = null;
 	
-	public McMoney_Engine(GiantBanks plugin) {
+	public AEco_Engine(GiantBanks plugin) {
 		this.plugin = plugin;
 		Bukkit.getServer().getPluginManager().registerEvents(new EcoListener(this), plugin);
 		
 		if(eco == null) {
-			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("McMoney");
+			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("AEco");
 
 			if(ecoEn != null && ecoEn.isEnabled()) {
-				eco = McMoneyAPI.getInstance();
+				eco = AEco.ECONOMY;
+				
+				try{
+					createWallet = eco.getClass().getMethod("createWallet", String.class);
+					createWallet.setAccessible(true);
+				}catch(SecurityException e) {
+				}catch(NoSuchMethodException e) {
+				}catch(NullPointerException e) {
+				}
+				
 				if(eco == null) {
-					plugin.getLogger().log(Level.WARNING, "Failed to hook into McMoney!");
+					plugin.getLogger().log(Level.WARNING, "Failed to hook into AEco!");
 				}else{
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into McMoney!");
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into AEco!");
 				}
 			}
 		}
@@ -54,7 +65,7 @@ public class McMoney_Engine implements iEco {
 	
 	@Override
 	public double getBalance(String player) {
-		return eco.getMoney(player);
+		return (double) eco.cash(player);
 	}
 	
 	@Override
@@ -65,12 +76,14 @@ public class McMoney_Engine implements iEco {
 	@Override
 	public boolean withdraw(String player, double amount) {
 		if(amount > 0) {
-			if((eco.getMoney(player) - amount) > 0) {
-				eco.removeMoney(player, amount);
+			int balance = eco.cash(player);
+			amount = Math.ceil(amount);
+			if((balance - amount) >= 0) {
+				eco.set(player, ((int) (balance - amount)));
 				return true;
 			}
 		}
-					
+		
 		return false;
 	}
 	
@@ -82,28 +95,35 @@ public class McMoney_Engine implements iEco {
 	@Override
 	public boolean deposit(String player, double amount) {
 		if(amount > 0) {
-			eco.addMoney(player, amount);
+			int balance = eco.cash(player);
+			eco.set(player, ((int) (balance + Math.ceil(amount))));
 			return true;
 		}
-		
 		return false;
 	}
 	
 	public class EcoListener implements Listener {
-		private McMoney_Engine eco;
+		private AEco_Engine eco;
 		
-		public EcoListener(McMoney_Engine eco) {
+		public EcoListener(AEco_Engine eco) {
 			this.eco = eco;
 		}
 		
 		@EventHandler()
 		public void onPluginEnable(PluginEnableEvent event) {
 			if(eco.eco == null) {
-				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("McMoney");
+				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("AEco");
 				
 				if(ecoEn != null && ecoEn.isEnabled()) {
-					eco.eco = McMoneyAPI.getInstance();
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into McMoney!");
+					eco.eco = AEco.ECONOMY;
+					try{
+						createWallet = eco.eco.getClass().getMethod("createWallet", String.class);
+						createWallet.setAccessible(true);
+					}catch(SecurityException e) {
+					}catch(NoSuchMethodException e) {
+					}catch(NullPointerException e) {
+					}
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into AEco!");
 				}
 			}
 		}
@@ -111,9 +131,9 @@ public class McMoney_Engine implements iEco {
 		@EventHandler()
 		public void onPluginDisable(PluginDisableEvent event) {
 			if(eco.eco != null) {
-				if(event.getPlugin().getDescription().getName().equals("McMoney")) {
+				if(event.getPlugin().getDescription().getName().equals("AEco")) {
 					eco.eco = null;
-					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into McMoney!");
+					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into AEco!");
 				}
 			}
 		}

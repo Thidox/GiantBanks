@@ -1,7 +1,7 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco.Engines;
+package nl.giantit.minecraft.GiantBanks.Eco.Engines;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.Eco.mEco;
+import nl.giantit.minecraft.GiantBanks.Eco.mEco;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

@@ -1,7 +1,7 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco.Engines;
+package nl.giantit.minecraft.GiantBanks.Eco.Engines;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.Eco.iEco;
+import nl.giantit.minecraft.GiantBanks.Eco.iEco;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -13,31 +13,31 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Level;
 
-import is.currency.Currency;
-import is.currency.syst.AccountContext;
+import me.mjolnir.mineconomy.Accounting;
+import me.mjolnir.mineconomy.MineConomy;
 
 /**
  *
  * @author Giant
  */
-public class CurrencyCore_Engine implements iEco {
+public class MineConomy_Engine implements iEco {
 	
 	private GiantBanks plugin;
-	private Currency eco = null;
+	private MineConomy eco = null;
 	
-	public CurrencyCore_Engine(GiantBanks plugin) {
+	public MineConomy_Engine(GiantBanks plugin) {
 		this.plugin = plugin;
 		Bukkit.getServer().getPluginManager().registerEvents(new EcoListener(this), plugin);
 		
 		if(eco == null) {
-			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("CurrencyCore");
+			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("MineConomy");
 
 			if(ecoEn != null && ecoEn.isEnabled()) {
-				eco = (Currency) ecoEn;
+				eco = (MineConomy) ecoEn;
 				if(eco == null) {
-					plugin.getLogger().log(Level.WARNING, "Failed to hook into CurrencyCore!");
+					plugin.getLogger().log(Level.WARNING, "Failed to hook into MineConomy!");
 				}else{
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into CurrencyCore!");
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into MineConomy!");
 				}
 			}
 		}
@@ -55,11 +55,7 @@ public class CurrencyCore_Engine implements iEco {
 	
 	@Override
 	public double getBalance(String player) {
-		AccountContext acc = eco.getAccountManager().getAccount(player);
-		if(acc == null)
-			return 0.0;
-		
-		return acc.getBalance();
+		return Accounting.getBalance(player, MineConomy.accounts);
 	}
 	
 	@Override
@@ -70,15 +66,13 @@ public class CurrencyCore_Engine implements iEco {
 	@Override
 	public boolean withdraw(String player, double amount) {
 		if(amount > 0) {
-			AccountContext acc = eco.getAccountManager().getAccount(player);
-			if(acc != null) {
-				if(acc.hasBalance(amount)) {
-					acc.subtractBalance(amount);
-					return true;
-				}
+			double b = Accounting.getBalance(player, MineConomy.accounts);
+			if((b - amount) > 0) {
+				Accounting.setBalance(player, (b - amount), MineConomy.accounts);
+				return true;
 			}
 		}
-		
+					
 		return false;
 	}
 	
@@ -90,31 +84,29 @@ public class CurrencyCore_Engine implements iEco {
 	@Override
 	public boolean deposit(String player, double amount) {
 		if(amount > 0) {
-			AccountContext acc = eco.getAccountManager().getAccount(player);
-			if(acc != null) {
-				acc.addBalance(amount);
-				return true;
-			}
+			double b = Accounting.getBalance(player, MineConomy.accounts);
+			Accounting.setBalance(player, (b + amount), MineConomy.accounts);
+			return true;
 		}
 		
 		return false;
 	}
 	
 	public class EcoListener implements Listener {
-		private CurrencyCore_Engine eco;
+		private MineConomy_Engine eco;
 		
-		public EcoListener(CurrencyCore_Engine eco) {
+		public EcoListener(MineConomy_Engine eco) {
 			this.eco = eco;
 		}
 		
 		@EventHandler()
 		public void onPluginEnable(PluginEnableEvent event) {
 			if(eco.eco == null) {
-				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("CurrencyCore");
+				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("MineConomy");
 				
 				if(ecoEn != null && ecoEn.isEnabled()) {
-					eco.eco = (Currency) ecoEn;
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into CurrencyCore!");
+					eco.eco = (MineConomy) ecoEn;
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into MineConomy!");
 				}
 			}
 		}
@@ -122,9 +114,9 @@ public class CurrencyCore_Engine implements iEco {
 		@EventHandler()
 		public void onPluginDisable(PluginDisableEvent event) {
 			if(eco.eco != null) {
-				if(event.getPlugin().getDescription().getName().equals("CurrencyCore")) {
+				if(event.getPlugin().getDescription().getName().equals("MineConomy")) {
 					eco.eco = null;
-					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into CurrencyCore!");
+					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into MineConomy!");
 				}
 			}
 		}

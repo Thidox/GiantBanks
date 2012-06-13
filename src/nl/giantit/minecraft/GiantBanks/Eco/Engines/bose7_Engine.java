@@ -1,7 +1,7 @@
-package nl.giantit.minecraft.GiantBanks.core.Eco.Engines;
+package nl.giantit.minecraft.GiantBanks.Eco.Engines;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.Eco.iEco;
+import nl.giantit.minecraft.GiantBanks.Eco.iEco;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -13,32 +13,26 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Level;
 
-import me.mjolnir.mineconomy.Accounting;
-import me.mjolnir.mineconomy.MineConomy;
+import cosine.boseconomy.BOSEconomy;
 
 /**
  *
  * @author Giant
  */
-public class MineConomy_Engine implements iEco {
+public class bose7_Engine implements iEco {
 	
 	private GiantBanks plugin;
-	private MineConomy eco = null;
+	private BOSEconomy eco;
 	
-	public MineConomy_Engine(GiantBanks plugin) {
+	public bose7_Engine(GiantBanks plugin) {
 		this.plugin = plugin;
 		Bukkit.getServer().getPluginManager().registerEvents(new EcoListener(this), plugin);
-		
 		if(eco == null) {
-			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("MineConomy");
+			Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("BOSEconomy");
 
-			if(ecoEn != null && ecoEn.isEnabled()) {
-				eco = (MineConomy) ecoEn;
-				if(eco == null) {
-					plugin.getLogger().log(Level.WARNING, "Failed to hook into MineConomy!");
-				}else{
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into MineConomy!");
-				}
+			if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getDescription().getVersion().startsWith("0.7")) {
+				eco = (BOSEconomy) ecoEn;
+				plugin.getLogger().log(Level.INFO, "Succesfully hooked into BOSEconomy 7!");
 			}
 		}
 	}
@@ -55,7 +49,7 @@ public class MineConomy_Engine implements iEco {
 	
 	@Override
 	public double getBalance(String player) {
-		return Accounting.getBalance(player, MineConomy.accounts);
+		return eco.getPlayerMoneyDouble(player);
 	}
 	
 	@Override
@@ -66,13 +60,10 @@ public class MineConomy_Engine implements iEco {
 	@Override
 	public boolean withdraw(String player, double amount) {
 		if(amount > 0) {
-			double b = Accounting.getBalance(player, MineConomy.accounts);
-			if((b - amount) > 0) {
-				Accounting.setBalance(player, (b - amount), MineConomy.accounts);
-				return true;
-			}
+			double balance = eco.getPlayerMoneyDouble(player);
+			return eco.setPlayerMoney(player, (balance - amount), true);
 		}
-					
+		
 		return false;
 	}
 	
@@ -84,29 +75,27 @@ public class MineConomy_Engine implements iEco {
 	@Override
 	public boolean deposit(String player, double amount) {
 		if(amount > 0) {
-			double b = Accounting.getBalance(player, MineConomy.accounts);
-			Accounting.setBalance(player, (b + amount), MineConomy.accounts);
-			return true;
+			return eco.addPlayerMoney(player, amount, true);
 		}
 		
 		return false;
 	}
 	
 	public class EcoListener implements Listener {
-		private MineConomy_Engine eco;
+		private bose7_Engine eco;
 		
-		public EcoListener(MineConomy_Engine eco) {
+		public EcoListener(bose7_Engine eco) {
 			this.eco = eco;
 		}
 		
 		@EventHandler()
 		public void onPluginEnable(PluginEnableEvent event) {
 			if(eco.eco == null) {
-				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("MineConomy");
+				Plugin ecoEn = plugin.getServer().getPluginManager().getPlugin("BOSEconomy");
 				
-				if(ecoEn != null && ecoEn.isEnabled()) {
-					eco.eco = (MineConomy) ecoEn;
-					plugin.getLogger().log(Level.INFO, "Succesfully hooked into MineConomy!");
+				if(ecoEn != null && ecoEn.isEnabled() && ecoEn.getDescription().getVersion().startsWith("0.7")) {
+					eco.eco = (BOSEconomy) ecoEn;
+					plugin.getLogger().log(Level.INFO, "Succesfully hooked into BOSEconomy 7!");
 				}
 			}
 		}
@@ -114,9 +103,9 @@ public class MineConomy_Engine implements iEco {
 		@EventHandler()
 		public void onPluginDisable(PluginDisableEvent event) {
 			if(eco.eco != null) {
-				if(event.getPlugin().getDescription().getName().equals("MineConomy")) {
+				if(event.getPlugin().getDescription().getName().equals("BOSEconomy")) {
 					eco.eco = null;
-					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into MineConomy!");
+					plugin.getLogger().log(Level.INFO, "Succesfully unhooked into BOSEconomy 7!");
 				}
 			}
 		}
