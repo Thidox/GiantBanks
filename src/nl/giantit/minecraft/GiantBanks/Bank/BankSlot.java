@@ -1,4 +1,4 @@
-package nl.giantit.minecraft.GiantBanks.core.Bank;
+package nl.giantit.minecraft.GiantBanks.Bank;
 
 public class BankSlot {
 
