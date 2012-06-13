@@ -118,6 +118,10 @@ public class GiantBanks extends JavaPlugin {
 		return getServer().getScheduler().scheduleAsyncDelayedTask(this, run, 20L);
 	}
 	
+	public int scheduleAsyncDelayedTask(final Runnable run, Long delay) {
+		return getServer().getScheduler().scheduleAsyncDelayedTask(this, run, delay);
+	}
+	
 	public int scheduleAsyncRepeatingTask(final Runnable run, Long init, Long delay) {
 		return getServer().getScheduler().scheduleAsyncRepeatingTask(this, run, init, delay);
 	}
@@ -148,6 +152,10 @@ public class GiantBanks extends JavaPlugin {
 	
 	public dbHandler getDbHandler() {
 		return null;
+	}
+	
+	public Sync getSync() {
+		return this.sync;
 	}
 	
 	/*public void setPermMan(perm perm) {
