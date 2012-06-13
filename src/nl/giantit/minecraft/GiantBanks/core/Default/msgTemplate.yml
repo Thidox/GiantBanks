@@ -1,0 +1,46 @@
+version: 1.2
+main:
+    broadcastBuy: C_YELLOW%player C_WHITEbought some C_YELLOW%item 
+    broadcastSell: C_YELLOW%player C_WHITEsold some C_YELLOW%item  
+    broadcastGift: C_YELLOW%giftSender C_WHITEgifted some C_YELLOW%item C_WHITEto C_YELLOW%giftReceiverC_WHITE 
+    buy: You have just bought C_YELLOW%amount C_WHITEof item C_YELLOW%item C_WHITEfor C_YELLOW%cash!
+    giftSender: You have just gifted C_YELLOW%amount C_WHITEof item C_YELLOW%item C_WHITEto user C_YELLOW%giftReceiver C_WHITEfor C_YELLOW%cash!
+    giftReceiver: C_YELLOW%giftSender C_WHITEjust gifted you C_YELLOW%amount C_WHITEof item C_YELLOW%itemC_WHITE!
+    sell: You have just sold C_YELLOW%amount C_WHITEof item C_YELLOW%item C_WHITEfor C_YELLOW%cash!
+    helpCommand: C_RED/%command C_YELLOW-C_WHITE %description
+    itemListEntry: ID C_YELLOW%id C_WHITEType C_YELLOW%type C_WHITEName C_YELLOW%name C_WHITEAmount C_YELLOW%perStack C_WHITESell for C_YELLOW%sellFor C_WHITEBuy for C_YELLOW%buyFor C_WHITEStock C_YELLOW%stock
+    newBalance: Your new balance is%colon C_YELLOW%balance
+admin:
+    add: You just added item C_YELLOW%item C_WHITEwith quantity C_YELLOW%amount sold for C_YELLOW%sellFor bought for C_YELLOW%buyFor with stock C_YELLOW%stock!
+    addStock: You have successfully added C_YELLOW%amount C_WHITEto the stock of item C_YELLOW%item!
+    updated: You have successfully updated item C_YELLOW%item!
+    removed: Item C_YELLOW%item C_WHITEhas been successfully removed from the shop!
+    shopAdded: We have successfully created a shop with name C_YELLOW%shop C_WHITEin the world C_YELLOW%worldC_WHITE!
+    shopSelected: We have successfully selected the shop with name C_YELLOW%shop C_WHITEin the world C_YELLOW%worldC_WHITE for updating!
+    nameUpdated: We have successfully changed the shops name to C_YELLOW%nameC_WHITE!
+    locUpdated: We have successfully changed the shops location to %minX, %minY, %minZ, %maxX, %maxY, %maxZ!
+    worldUpdated: We have successfully changed the shops world to %minX, %minY, %minZ, %maxX, %maxY, %maxZ in world C_YELLOW%worldC_WHITE!
+    nameUpdated: We have successfully changed the shops name to C_YELLOW%shopC_WHITE!
+    shopUpdated: We have successfully updated the shop to name C_YELLOW%shop C_WHITEin the world C_YELLOW%worldC_WHITE!
+    shopRemoved: We have successfully removed the shop with name C_YELLOW%shop C_WHITEin the world C_YELLOW%worldC_WHITE!
+errors:
+    noPermissions: C_REDWe are sorry but you do not have access to that command (C_YELLOW%commandC_RED)!
+    syntaxError: C_REDPlease use the appropriate syntax for the C_YELLOW%command C_REDcommand!
+    itemAlreadyFound: C_REDWe are sorry but the requested item seems to already exist in our database!
+    itemNotFound: C_REDWe are sorry but the requested item does not seem to exist!
+    insufFunds: C_REDWe are sorry but you do not have enough money for that puchase! You need %needed while you have only %have
+    insufItems: C_REDWe are sorry but you do not have enough items to sell! You need %needed while you have only %have
+    infFull: C_REDWe are sorry buy your inventory is full! We will drop the remaining items for you!
+    notForSale: C_REDWe are sorry but the item you are trying to purchase is not for sale!
+    noReturns: C_REDWe are sorry but we are not currently buying the item you are trying to sell...
+    noItems: C_REDWe are sorry but it seems like our shop does not hold any items yet!
+    noneOrMoreResults: C_REDWe are sorry but we have no frigging clue what item you want as we found either none or more then 1 result!
+    itemNotInShop: C_REDWe are sorry but %item has not been added the shop yet!
+    itemNotUnique: C_REDWe are sorry but %item resulted in more then 1 result from our database, we do not really know which one to use now!
+    unkown: C_REDWe are sorry but an unknown error occured!
+    locTaken: C_REDWe are sorry but a shop was already found at %minX, %minY, %minZ, %maxX, %maxY, %maxZ in the world %world!
+    shopNameTaken: C_REDWe are sorry but a shop with the name %shop has already been found in the world %world!
+    shopNotFound: C_REDWe are sorry but we are unable to find a shop with the name %shop has already been found in the world %world!
+    noShopSelected: C_REDWe are sorry, but you need to select a shop before you can update!
+    itemOutOfStock: C_REDWe are sorry, but the requested item is out of stock!
+    stockExeedsMaxStock: C_REDWe are sorry, but the given item stock exceeds our maximal capacity!

@@ -1,0 +1,56 @@
+GiantBanks:
+    global:
+        version: 0.1
+        name: GiantBanks
+        debug: false
+        perPage: 5
+        checkForUpdates: true
+    log:
+        useLogging: true
+        log:
+            store: true
+            get: true
+            gift: true
+            unknown: true
+    permissions:
+        usePermissions: true
+        opHasPerms: true
+        Engine: SPERM
+    broadcast:
+        gift: true
+    db:
+        driver: SQLite
+        database: GiantBanks
+        prefix: bank_
+        host: localhost
+        port: 3306
+        user: root
+        password: 
+    cache:
+        useCache: true
+        updateDelay: '00:15:00'
+        cache:
+            log: false
+            banks: true
+            accounts: true
+            types: true
+    Economy:
+        Engine: ICONOMY6
+    Location:
+        perPage: 5
+        useGiantBanksLocation: true
+        showPlayerEnteredBank: true
+        tool:
+            id: 351
+            type: 6
+        protect:
+            Worlds:
+                disableOffList: true
+                protected:
+                - world1
+                allowed:
+                - world1
+            Commands:
+            - store
+            - get
+            - list
