@@ -1,5 +1,8 @@
 package nl.giantit.minecraft.GiantBanks.Bank;
 
+import nl.giantit.minecraft.GiantBanks.GiantBanks;
+import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -66,6 +69,8 @@ public class UserAccount {
 			int a = this.items.remove(item);
 			if(this.type.getMaxPerSlot() > a) {
 				this.items.put(item, (amount + a));
+				this.isUpdated = true;
+				GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
 				return null;
 			}else{
 				return "";
@@ -73,6 +78,8 @@ public class UserAccount {
 		}else{
 			int mS = this.type.getMaxSlots();
 			if(mS <= 0 || mS > this.items.size()) {
+				this.isUpdated = true;
+				GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
 				return null;
 			}else{
 				return "";
