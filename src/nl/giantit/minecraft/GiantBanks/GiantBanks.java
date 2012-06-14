@@ -4,6 +4,7 @@ import nl.giantit.minecraft.GiantBanks.Commands.ChatExecutor;
 import nl.giantit.minecraft.GiantBanks.Commands.ConsoleExecutor;
 import nl.giantit.minecraft.GiantBanks.core.config;
 import nl.giantit.minecraft.GiantBanks.core.Database.Database;
+import nl.giantit.minecraft.GiantBanks.core.Items.Items;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbHandler;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbInit;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.Sync.Sync;
@@ -34,8 +35,7 @@ public class GiantBanks extends JavaPlugin {
 	private PermHandler permHandler;
 	private ChatExecutor chat;
 	private ConsoleExecutor console;
-	//private console console;
-	//private Items itemHandler;
+	private Items itemHandler;
 	//private Eco econHandler;
 	//private Messages msgHandler;
 	//private Locationer locHandler;
@@ -88,8 +88,8 @@ public class GiantBanks extends JavaPlugin {
 			
 			chat = new ChatExecutor(this);
 			console = new ConsoleExecutor(this);
-			/*itemHandler = new Items(this);
-			econHandler = new Eco(this);
+			itemHandler = new Items(this);
+			/*econHandler = new Eco(this);
 			msgHandler = new Messages(this);*/
 			
 		}catch(Exception e) {
@@ -158,19 +158,11 @@ public class GiantBanks extends JavaPlugin {
 		return this.sync;
 	}
 	
-	/*public void setPermMan(perm perm) {
-		this.perms = perm;
-	}
-	
-	public Server getSrvr() {
-		return getServer();
-	}
-	
 	public Items getItemHandler() {
 		return this.itemHandler;
 	}
 	
-	public Eco getEcoHandler() {
+	/*public Eco getEcoHandler() {
 		return this.econHandler;
 	}
 	
