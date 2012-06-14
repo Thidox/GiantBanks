@@ -4,5 +4,6 @@ public enum dbType {
 	ACCOUNTS,
 	TYPES,
 	BANKS,
-	LOGS
+	LOGS,
+	ALL
 }
