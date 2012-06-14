@@ -41,7 +41,7 @@ public class Sync {
 	
 	private void init() {
 		dbHandler dH = plugin.getDbHandler();
-		dH.init(null);
+		dH.init();
 	}
 	
 	private void start() {
@@ -64,6 +64,7 @@ public class Sync {
 	public Sync(GiantBanks plugin) {
 		this.plugin = plugin;
 		this.init();
+		
 		if(conf.getBoolean("GiantBanks.cache.useCache"))
 			this.start();
 	}
