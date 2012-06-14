@@ -10,7 +10,7 @@ public class dbHandler {
 	private GiantBanks plugin;
 	private HashMap<String, IHandler> handlers = new HashMap<String, IHandler>(); 
 	
-	public void dbHandler(GiantBanks plugin) {
+	public dbHandler(GiantBanks plugin) {
 		this.plugin = plugin;
 		handlers.put("Accounts", new Accounts());
 		handlers.put("Types", new Types());
