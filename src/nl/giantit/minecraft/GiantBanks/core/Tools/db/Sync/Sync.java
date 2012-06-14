@@ -41,7 +41,7 @@ public class Sync {
 	
 	private void init() {
 		dbHandler dH = plugin.getDbHandler();
-		dH.init();
+		dH.init(null);
 	}
 	
 	private void start() {
