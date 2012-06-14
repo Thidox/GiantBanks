@@ -23,6 +23,9 @@ public class dbHandler {
 	}
 	
 	public void init(dbType type) {
+		if(type == null)
+			type = dbType.ALL;
+		
 		switch(type) {
 			case ACCOUNTS:
 				handlers.get("Accounts").init();
@@ -44,6 +47,9 @@ public class dbHandler {
 	}
 	
 	public void save(dbType type) {
+		if(type == null)
+			type = dbType.ALL;
+		
 		switch(type) {
 			case ACCOUNTS:
 				handlers.get("Accounts").save();
@@ -65,6 +71,9 @@ public class dbHandler {
 	}
 	
 	public void fullSave(dbType type) {
+		if(type == null)
+			type = dbType.ALL;
+		
 		switch(type) {
 			case ACCOUNTS:
 				handlers.get("Accounts").fullSave();
