@@ -31,6 +31,7 @@ public class GiantBanks extends JavaPlugin {
 	private static GiantBanks plugin;
 	private static Server Server;
 	private Database db;
+	private dbHandler dH;
 	private Sync sync;
 	private PermHandler permHandler;
 	private ChatExecutor chat;
@@ -84,6 +85,7 @@ public class GiantBanks extends JavaPlugin {
 				permHandler = new PermHandler(this, "NOPERM", true);
 			}
 			
+			this.dH = new dbHandler(this);
 			this.sync = new Sync(this);
 			
 			chat = new ChatExecutor(this);
@@ -151,7 +153,7 @@ public class GiantBanks extends JavaPlugin {
 	}
 	
 	public dbHandler getDbHandler() {
-		return null;
+		return this.dH;
 	}
 	
 	public Sync getSync() {
