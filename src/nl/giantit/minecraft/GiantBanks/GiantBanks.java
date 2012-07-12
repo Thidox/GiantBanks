@@ -13,6 +13,7 @@ import nl.giantit.minecraft.GiantBanks.core.perms.Permission;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Server;
 
@@ -106,14 +107,18 @@ public class GiantBanks extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
+		this.sync.stop();
 		
+		this.db.getEngine().close();
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+		if(!(sender instanceof Player)) {
+			return console.exec(sender, args);
+		}
 		
-		
-		return false;
+		return chat.exec(sender, args);
 	}
 	
 	public int scheduleAsyncDelayedTask(final Runnable run) {

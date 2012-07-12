@@ -1,5 +1,8 @@
 package nl.giantit.minecraft.GiantBanks.core.Items;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author Giant
@@ -13,6 +16,33 @@ public class ItemID {
 	
 	public ItemID() {
 		this(0, null);
+	}
+	
+	public ItemID(String s) {
+		String[] data = s.split(", ");
+		for(int i = 0; i < data.length; i++) {
+			String v = data[i];
+			if(v.startsWith("ItemID"))
+				v = v.replace("ItemID {", "");
+
+			if(v.endsWith("}"))
+				v = v.replace("}", "");
+			
+			v = v.replaceFirst("[a-zA-Z]+=", "");
+			
+			//Has to be better way for this...
+			if(i == 0) {
+				this.id = Integer.parseInt(v);
+			}else if(i == 1) {
+				this.type = Integer.parseInt(v);
+			}else if(i == 2) {
+				this.dura = Short.parseShort(v);
+			}else if(i == 3) {
+				this.name = v;
+			}else if(i == 4) {
+				this.hasType = Boolean.parseBoolean(v);
+			}
+		}
 	}
 	
 	public ItemID(int id) {
@@ -34,6 +64,10 @@ public class ItemID {
 		}
 		
 		this.name = name;
+	}
+	
+	public ItemID(Map<String, Object> map) {
+		
 	}
 	
 	public int getId() {
@@ -62,13 +96,13 @@ public class ItemID {
 		return this.dura;
 	}
 	
-	@Override
-	public String toString() {
-		return "Item ID: " + this.id + " Item type: " + this.type;
-	}
-	
 	public boolean equals(ItemID key) {
 		Integer type = (key.getType() == null) ? 0 : key.getType();
 		return (key.getId() == this.id && type == this.type && key.getDurability() == this.dura);
+	}
+	
+	@Override
+	public String toString() {
+		return "ItemID {id=" + this.id + ", type=" + this.type + ", dura=" + this.dura + ", name=" + this.name + ", hasType=" + this.hasType + "}";
 	}
 }

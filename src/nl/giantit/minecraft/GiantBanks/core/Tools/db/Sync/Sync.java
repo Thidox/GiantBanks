@@ -93,16 +93,20 @@ public class Sync {
 		final dbHandler dH = plugin.getDbHandler();
 		switch(t) {
 			case ACCOUNTS:
-				if(conf.getBoolean("GiantBanks.cache.cache.accounts"))
+				if(!conf.getBoolean("GiantBanks.cache.cache.accounts")) {
 					this.plugin.scheduleAsyncDelayedTask(new Runnable() {
 						@Override
 						public void run() {
 							dH.save(t);
 						}
 					}, 5L);
+					this.plugin.getLogger().warning("Saving now!");
+				}else{
+					this.plugin.getLogger().warning("Saving later!");
+				}
 				break;
 			case TYPES:
-				if(conf.getBoolean("GiantBanks.cache.cache.types"))
+				if(!conf.getBoolean("GiantBanks.cache.cache.types"))
 					this.plugin.scheduleAsyncDelayedTask(new Runnable() {
 						@Override
 						public void run() {
@@ -111,7 +115,7 @@ public class Sync {
 					}, 5L);
 				break;
 			case BANKS:
-				if(conf.getBoolean("GiantBanks.cache.cache.banks"))
+				if(!conf.getBoolean("GiantBanks.cache.cache.banks"))
 					this.plugin.scheduleAsyncDelayedTask(new Runnable() {
 						@Override
 						public void run() {
@@ -120,7 +124,7 @@ public class Sync {
 					}, 5L);
 				break;
 			case LOGS:
-				if(conf.getBoolean("GiantBanks.cache.cache.logs"))
+				if(!conf.getBoolean("GiantBanks.cache.cache.logs"))
 					this.plugin.scheduleAsyncDelayedTask(new Runnable() {
 						@Override
 						public void run() {
@@ -136,6 +140,6 @@ public class Sync {
 			plugin.getServer().getScheduler().cancelTask(tID);
 		}
 		
-		this.saveNow();
+		this.fullSave();
 	}
 }

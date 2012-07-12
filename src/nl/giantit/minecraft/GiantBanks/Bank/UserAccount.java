@@ -1,6 +1,7 @@
 package nl.giantit.minecraft.GiantBanks.Bank;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
+import nl.giantit.minecraft.GiantBanks.core.Items.ItemID;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbType;
 
 import java.util.ArrayList;
@@ -10,16 +11,58 @@ public class UserAccount {
 
 	private static HashMap<String, UserAccount> accounts = new HashMap<String, UserAccount>();
 	
-	private HashMap<String, Integer> items = new HashMap<String, Integer>();
 	private HashMap<String, ArrayList<Integer>> cache = new HashMap<String, ArrayList<Integer>>();
-	private HashMap<Integer, BankSlot> slots = new HashMap<Integer, BankSlot>();
+	private ArrayList<BankSlot> slots = new ArrayList<BankSlot>();
 	
 	private Integer aID;
 	private String owner;
 	private String rawData;
 	private Boolean isUpdated = false;
 	private AccountType type;
+	
+	private void fillNewSlot(int usedSlots, String item, int amount, ItemID iID) {
+		BankSlot bS = new BankSlot(usedSlots, item, amount, iID);
+		this.slots.add(bS);
+		ArrayList<Integer> slots = new ArrayList<Integer>();
+		slots.add(usedSlots);
 		
+		this.cache.put(item, slots);
+		this.isUpdated = true;
+	}
+	
+	private void parseData() {
+		String[] d = this.rawData.split("-;-");
+		for(String bS : d) {
+			if(bS.length() <= 0)
+				continue;
+			
+			int u = this.slots.size();
+			this.slots.add(new BankSlot(bS));
+			if(!this.cache.containsKey(this.slots.get(u).getItem())) {
+				ArrayList<Integer> slots = new ArrayList<Integer>();
+				slots.add(u);
+				
+				this.cache.put(this.slots.get(u).getItem(), slots);
+			}else{
+				ArrayList<Integer> slots = this.cache.remove(this.slots.get(u).getItem());;
+				slots.add(u);
+				
+				this.cache.put(this.slots.get(u).getItem(), slots);
+			}
+		}
+		
+	}
+	
+	private String rawData() {
+		String d = "";
+		
+		for(BankSlot slot : this.slots) {
+			d += slot + "-;-";
+		}
+		
+		return d;
+	}
+	
 	private UserAccount(String p, String data) {
 		this(null, p, data);
 		this.isUpdated = true;
@@ -30,12 +73,20 @@ public class UserAccount {
 	}
 	
 	private UserAccount(Integer id, String p, String data, AccountType type) {
+		if(null == type)
+			type = AccountType.getType(0);
+			
 		this.aID = id;
 		this.owner = p;
 		this.rawData = data;
 		this.type = type;
 		
-		//this.parseData();
+		if(null != this.rawData)
+			this.parseData();
+	}
+	
+	public void setAccountID(int id) {
+		this.aID = id;
 	}
 	
 	public Integer getAccountID() {
@@ -47,8 +98,7 @@ public class UserAccount {
 	}
 	
 	public String getRawData() {
-		//return this.getRaw();
-		return null;
+		return this.rawData();
 	}
 	
 	public AccountType getType() {
@@ -64,35 +114,109 @@ public class UserAccount {
 		return this.isUpdated;
 	}
 	
-	public String add(String item, int amount) {
-		if(this.items.containsKey(item)) {
-			int a = this.items.remove(item);
-			if(this.type.getMaxPerSlot() > a) {
-				this.items.put(item, (amount + a));
+	public String add(ItemID iID, int amount) {
+		if(iID == null)
+			return "";
+		
+		String item = GiantBanks.getPlugin().getItemHandler().getItemNameByID(iID.getId(), iID.getType());
+		int mS = this.type.getMaxSlots();
+		int amt = amount;
+		
+		if(this.cache.containsKey(item)) {
+			ArrayList<Integer> slotIDs = this.cache.remove(item);
+			for(int i = 0; i < slotIDs.size(); i++) {
+				Integer slotID = slotIDs.get(i);
+				BankSlot bS = this.slots.get(slotID);
+				if(!bS.contains(iID)) {
+					//Durability missmatch? Or perhaps a misscache?
+					//What ever the case, we need to remove that entry from the cache!
+					slotIDs.remove(i);
+					continue;
+				}
+				
+				int a = bS.getAmount() + amt;
+				int d = this.type.getMaxPerSlot() - bS.getAmount();
+				
+				if(this.type.getMaxPerSlot() <= 0 || a <= this.type.getMaxPerSlot()) {
+					amt = 0;
+					bS.setAmount(a);
+					break;
+				}else if(d > 0) {
+					amt -= d;
+					bS.setAmount(d, true);
+					if(amt <= 0)
+						break;
+				}
+			}
+			
+			if(amt > 0){
+				while(amt > 0) {
+					int usedSlots = this.slots.size();
+					if(mS <= 0 || mS > usedSlots) {
+						if(amt - this.type.getMaxPerSlot() > 0) {
+							amt -= this.type.getMaxPerSlot();
+							this.fillNewSlot(usedSlots, item, this.type.getMaxPerSlot(), iID);
+						}else{
+							this.fillNewSlot(usedSlots, item, amt, iID);
+							amt = 0;
+							break;
+						}
+					}else{
+						break;
+					}
+				}
+			}
+			
+			if(amt == 0) {
+				//Call to Sync in case caching is off for bank accounts
 				this.isUpdated = true;
 				GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
 				return null;
 			}else{
+				//message saying x items have not been added
 				return "";
 			}
+			
+			//return ""; //Return message saying no available slots.
 		}else{
-			int mS = this.type.getMaxSlots();
-			if(mS <= 0 || mS > this.items.size()) {
-				this.isUpdated = true;
+			while(amt > 0) {
+				int usedSlots = this.slots.size();
+				if(mS <= 0 || mS > usedSlots) {
+					if(amt - this.type.getMaxPerSlot() > 0) {
+						amt -= this.type.getMaxPerSlot();
+						this.fillNewSlot(usedSlots, item, this.type.getMaxPerSlot(), iID);
+					}else{
+						this.fillNewSlot(usedSlots, item, amt, iID);
+						amt = 0;
+						break;
+					}
+				}else{
+					break;
+				}
+			}			
+			
+			if(amt == 0) {
+				//Call to Sync in case caching is off for bank accounts
 				GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
 				return null;
 			}else{
+				//message saying x items have not been added
 				return "";
 			}
 		}
 	}
 	
-	public void get(String item, int amount) {
+	public void get(ItemID iID, int amount) {
+		if(iID == null)
+			return;
 		
+		String item = GiantBanks.getPlugin().getItemHandler().getItemNameByID(iID.getId(), iID.getType());
+		
+		//Should probably return an ItemStack I think
 	}
 	
-	public void getAll(String item) {
-		
+	public void getAll(ItemID iID) {
+		//Should probably return an ArrayList<ItemStack>?
 	}
 	
 	public static UserAccount getUserAccount(String p) {
@@ -141,3 +265,4 @@ public class UserAccount {
 	}
 	
 }
+///b s -i:cookie -a 5

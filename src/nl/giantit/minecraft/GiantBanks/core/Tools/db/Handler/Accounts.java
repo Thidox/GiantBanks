@@ -1,5 +1,6 @@
 package nl.giantit.minecraft.GiantBanks.core.Tools.db.Handler;
 
+import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.Bank.AccountType;
 import nl.giantit.minecraft.GiantBanks.Bank.UserAccount;
 import nl.giantit.minecraft.GiantBanks.core.Database.Database;
@@ -24,6 +25,8 @@ public class Accounts implements IHandler {
 			if(res.get("accType") != null && !res.get("accType").equals("")) {
 				int typeID = Integer.parseInt(res.get("accType"));
 				type = AccountType.getType(typeID);
+			}else{
+				type = AccountType.getType("default");
 			}
 			
 			UserAccount.createUserAccount(id, res.get("player"), res.get("data"), type);
@@ -34,10 +37,12 @@ public class Accounts implements IHandler {
 	public void save() {
 		iDriver db = Database.Obtain().getEngine();
 		HashMap<String, UserAccount> uAccounts = UserAccount.getAllAccounts();
-		
+		GiantBanks.getPlugin().getLogger().info(uAccounts.size() + "");
 		for(UserAccount uA : uAccounts.values()) {
 			if(!uA.isUpdated())
 				continue;
+			
+			uA.setUpdated(false);
 			
 			Integer aID = uA.getAccountID();
 			AccountType type = uA.getType();
@@ -78,7 +83,12 @@ public class Accounts implements IHandler {
 					values.put(i, value);
 				}
 				
+				HashMap<String, String> where = new HashMap<String, String>();
+				where.put("player", owner);
+				
 				db.insert("#__accounts", fields, values).updateQuery();
+				ArrayList<HashMap<String, String>> resSet = db.select("id").from("#__accounts").where(where).execQuery();
+				uA.setAccountID(Integer.parseInt(resSet.get(0).get("id")));
 			}
 		}
 	}
@@ -89,6 +99,8 @@ public class Accounts implements IHandler {
 		HashMap<String, UserAccount> uAccounts = UserAccount.getAllAccounts();
 		
 		for(UserAccount uA : uAccounts.values()) {
+			uA.setUpdated(false);
+			
 			Integer aID = uA.getAccountID();
 			AccountType type = uA.getType();
 			String tID = (type.getTypeID() != null) ? type.getTypeID().toString() : "";

@@ -35,15 +35,15 @@ public class AccountType {
 	
 	public int getMaxSlots() {
 		
-		return 0;
+		return 20;
 	}
 	
 	public int getMaxPerSlot() {
 		
-		return 0;
+		return 20;
 	}
 	
-	public static AccountType createUserAccount(int id, String p, String data) {
+	public static AccountType createAccountType(int id, String p, String data) {
 		if(!types.containsKey(p)) {
 			AccountType AT = new AccountType(id, p, data);
 			types.put(p, AT);

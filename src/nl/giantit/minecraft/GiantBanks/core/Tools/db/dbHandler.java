@@ -40,8 +40,8 @@ public class dbHandler {
 				//init logs
 				break;
 			default:
-				handlers.get("Accounts").init();
 				handlers.get("Types").init();
+				handlers.get("Accounts").init();
 				break;
 		}
 	}
