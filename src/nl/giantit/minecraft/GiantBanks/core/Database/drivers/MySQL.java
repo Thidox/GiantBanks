@@ -65,6 +65,18 @@ public class MySQL implements iDriver {
 	}
 	
 	@Override
+	public void close() {
+		try {
+			if(!con.isClosed() || !con.isValid(0))
+				return;
+			
+			this.con.close();
+		}catch(SQLException e) {
+			//ignore
+		}
+	}
+	
+	@Override
 	public boolean tableExists(String table) {
 		ResultSet res = null;
 		table = table.replace("#__", prefix);

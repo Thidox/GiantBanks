@@ -9,6 +9,8 @@ import java.util.HashMap;
  */
 public interface iDriver {
 	
+	public void close();
+	
 	public boolean tableExists(String table);
 	
 	public void buildQuery(String string);
