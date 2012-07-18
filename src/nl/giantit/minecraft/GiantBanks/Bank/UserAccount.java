@@ -177,7 +177,7 @@ public class UserAccount {
 					//message saying x items have not been added
 					this.isUpdated = true;
 					GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
-					return "";
+					return null;
 				}
 			}
 			
