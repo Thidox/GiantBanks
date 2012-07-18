@@ -100,9 +100,6 @@ public class Sync {
 							dH.save(t);
 						}
 					}, 5L);
-					this.plugin.getLogger().warning("Saving now!");
-				}else{
-					this.plugin.getLogger().warning("Saving later!");
 				}
 				break;
 			case TYPES:
