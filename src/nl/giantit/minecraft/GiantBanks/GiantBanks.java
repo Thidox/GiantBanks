@@ -2,6 +2,7 @@ package nl.giantit.minecraft.GiantBanks;
 
 import nl.giantit.minecraft.GiantBanks.Commands.ChatExecutor;
 import nl.giantit.minecraft.GiantBanks.Commands.ConsoleExecutor;
+//import nl.giantit.minecraft.GiantBanks.Listeners.ServerListener;
 import nl.giantit.minecraft.GiantBanks.core.config;
 import nl.giantit.minecraft.GiantBanks.core.Database.Database;
 import nl.giantit.minecraft.GiantBanks.core.Items.Items;
@@ -11,11 +12,11 @@ import nl.giantit.minecraft.GiantBanks.core.Tools.db.Sync.Sync;
 import nl.giantit.minecraft.GiantBanks.core.perms.PermHandler;
 import nl.giantit.minecraft.GiantBanks.core.perms.Permission;
 
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.Server;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -94,6 +95,8 @@ public class GiantBanks extends JavaPlugin {
 			itemHandler = new Items(this);
 			/*econHandler = new Eco(this);
 			msgHandler = new Messages(this);*/
+			
+			//getServer().getPluginManager().registerEvents(new ServerListener(this), this);
 			
 		}catch(Exception e) {
 			log.log(Level.SEVERE, "[" + this.name + "](" + this.bName + ") Failed to load!");
