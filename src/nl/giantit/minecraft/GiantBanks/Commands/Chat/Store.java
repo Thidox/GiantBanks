@@ -115,8 +115,13 @@ public class Store {
 			
 			if(iID != null) {
 				if(amount > 0) {
-					uA.add(iID, amount);
-					p.sendMessage("Successfully stored " + String.valueOf(amount) + " of " + item + "!");
+					String m = uA.add(iID, amount);
+					if(null == m) {
+						p.sendMessage("Successfully stored " + String.valueOf(amount) + " of " + item + "!");
+						return;
+					}else{
+						
+					}
 				}else{
 					p.sendMessage("Srsly... I need more then 0 of that to append!");
 					return;
