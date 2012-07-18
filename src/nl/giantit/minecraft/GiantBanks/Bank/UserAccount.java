@@ -173,11 +173,15 @@ public class UserAccount {
 				GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
 				return null;
 			}else{
-				//message saying x items have not been added
-				return "";
+				if(amt < amount) {
+					//message saying x items have not been added
+					this.isUpdated = true;
+					GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
+					return "";
+				}
 			}
 			
-			//return ""; //Return message saying no available slots.
+			return ""; //Return message saying no available slots.
 		}else{
 			while(amt > 0) {
 				int usedSlots = this.slots.size();
