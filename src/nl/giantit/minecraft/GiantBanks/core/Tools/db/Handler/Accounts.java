@@ -37,7 +37,6 @@ public class Accounts implements IHandler {
 	public void save() {
 		iDriver db = Database.Obtain().getEngine();
 		HashMap<String, UserAccount> uAccounts = UserAccount.getAllAccounts();
-		GiantBanks.getPlugin().getLogger().info(uAccounts.size() + "");
 		for(UserAccount uA : uAccounts.values()) {
 			if(!uA.isUpdated())
 				continue;
