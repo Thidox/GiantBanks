@@ -11,7 +11,7 @@ public class Store {
 	
 	private static Items iH = GiantBanks.getPlugin().getItemHandler();
 
-	public static void Store(Player p, String[] args) {
+	public static void exec(Player p, String[] args) {
 		if(args.length > 2) {
 			String item = null;
 			int id = 0;
@@ -92,7 +92,7 @@ public class Store {
 			
 			if(item == null) {
 				if(id > 0) {
-					if(0 == type)
+					if(null != type && 0 == type)
 						type = null;
 					if(iH.isValidItem(id, type)) {
 						item = iH.getItemNameByID(id, type);
@@ -120,10 +120,11 @@ public class Store {
 						p.sendMessage("Successfully stored " + String.valueOf(amount) + " of " + item + "!");
 						return;
 					}else{
-						
+						p.sendMessage("Meh!");
+						p.sendMessage(m);
 					}
 				}else{
-					p.sendMessage("Srsly... I need more then 0 of that to append!");
+					p.sendMessage("Srsly... I need more then 0 of that to store!");
 					return;
 				}
 			}else{
