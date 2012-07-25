@@ -6,13 +6,11 @@ import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class UserAccount {
 
 	private static HashMap<String, UserAccount> accounts = new HashMap<String, UserAccount>();
-	
-	private HashMap<String, ArrayList<Integer>> cache = new HashMap<String, ArrayList<Integer>>();
-	private ArrayList<BankSlot> slots = new ArrayList<BankSlot>();
 	
 	private Integer aID;
 	private String owner;
@@ -20,14 +18,14 @@ public class UserAccount {
 	private Boolean isUpdated = false;
 	private AccountType type;
 	
-	private void fillNewSlot(int usedSlots, String item, int amount, ItemID iID) {
+	private HashMap<String, ArrayList<BankSlot>> slots = new HashMap<String, ArrayList<BankSlot>>();
+	private int usedSlots = 0;
+	
+	private BankSlot fillNewSlot(int usedSlots, String item, int amount, ItemID iID) {
 		BankSlot bS = new BankSlot(usedSlots, item, amount, iID);
-		this.slots.add(bS);
-		ArrayList<Integer> slots = new ArrayList<Integer>();
-		slots.add(usedSlots);
-		
-		this.cache.put(item, slots);
 		this.isUpdated = true;
+		
+		return bS;
 	}
 	
 	private void parseData() {
@@ -36,18 +34,19 @@ public class UserAccount {
 			if(bS.length() <= 0)
 				continue;
 			
-			int u = this.slots.size();
-			this.slots.add(new BankSlot(bS));
-			if(!this.cache.containsKey(this.slots.get(u).getItem())) {
-				ArrayList<Integer> slots = new ArrayList<Integer>();
-				slots.add(u);
+			BankSlot b = new BankSlot(bS);
+			if(!this.slots.containsKey(b.getItem())) {
+				this.usedSlots++;
+				ArrayList<BankSlot> slots = new ArrayList<BankSlot>();
+				slots.add(b);
 				
-				this.cache.put(this.slots.get(u).getItem(), slots);
+				this.slots.put(b.getItem(), slots);
 			}else{
-				ArrayList<Integer> slots = this.cache.remove(this.slots.get(u).getItem());;
-				slots.add(u);
+				this.usedSlots++;
+				ArrayList<BankSlot> slots = this.slots.remove(b.getItem());;
+				slots.add(b);
 				
-				this.cache.put(this.slots.get(u).getItem(), slots);
+				this.slots.put(b.getItem(), slots);
 			}
 		}
 		
@@ -56,8 +55,10 @@ public class UserAccount {
 	private String rawData() {
 		String d = "";
 		
-		for(BankSlot slot : this.slots) {
-			d += slot + "-;-";
+		for(ArrayList<BankSlot> s : this.slots.values()) {
+			for(BankSlot slot : s) {
+				d += slot + "-;-";
+			}
 		}
 		
 		return d;
@@ -122,15 +123,13 @@ public class UserAccount {
 		int mS = this.type.getMaxSlots();
 		int amt = amount;
 		
-		if(this.cache.containsKey(item)) {
-			ArrayList<Integer> slotIDs = this.cache.remove(item);
-			for(int i = 0; i < slotIDs.size(); i++) {
-				Integer slotID = slotIDs.get(i);
-				BankSlot bS = this.slots.get(slotID);
+		if(this.slots.containsKey(item)) {
+			ArrayList<BankSlot> bankslots = this.slots.get(item);
+			for(BankSlot bS : bankslots) {
 				if(!bS.contains(iID)) {
 					//Durability missmatch? Or perhaps a misscache?
 					//What ever the case, we need to remove that entry from the cache!
-					slotIDs.remove(i);
+					bankslots.remove(bS);
 					continue;
 				}
 				
@@ -149,15 +148,19 @@ public class UserAccount {
 				}
 			}
 			
-			if(amt > 0){
+			if(amt > 0) {
 				while(amt > 0) {
-					int usedSlots = this.slots.size();
-					if(mS <= 0 || mS > usedSlots) {
+					if(mS <= 0 || mS > this.usedSlots) {
+						int usedSlots = bankslots.size();
 						if(amt - this.type.getMaxPerSlot() > 0) {
 							amt -= this.type.getMaxPerSlot();
-							this.fillNewSlot(usedSlots, item, this.type.getMaxPerSlot(), iID);
+							bankslots.add(this.fillNewSlot(usedSlots, item, this.type.getMaxPerSlot(), iID));
+							usedSlots++;
+							this.usedSlots++;
 						}else{
-							this.fillNewSlot(usedSlots, item, amt, iID);
+							bankslots.add(this.fillNewSlot(usedSlots, item, amt, iID));
+							usedSlots++;
+							this.usedSlots++;
 							amt = 0;
 							break;
 						}
@@ -165,6 +168,8 @@ public class UserAccount {
 						break;
 					}
 				}
+				
+				this.slots.put(item, bankslots);
 			}
 			
 			if(amt == 0) {
@@ -183,23 +188,31 @@ public class UserAccount {
 			
 			return ""; //Return message saying no available slots.
 		}else{
+			ArrayList<BankSlot> bankslots = new ArrayList<BankSlot>();
 			while(amt > 0) {
-				int usedSlots = this.slots.size();
-				if(mS <= 0 || mS > usedSlots) {
+				if(mS <= 0 || mS > this.usedSlots) {
+					int usedSlots = bankslots.size();
 					if(amt - this.type.getMaxPerSlot() > 0) {
 						amt -= this.type.getMaxPerSlot();
-						this.fillNewSlot(usedSlots, item, this.type.getMaxPerSlot(), iID);
+						bankslots.add(this.fillNewSlot(usedSlots, item, this.type.getMaxPerSlot(), iID));
+						usedSlots++;
+						this.usedSlots++;
 					}else{
-						this.fillNewSlot(usedSlots, item, amt, iID);
+						bankslots.add(this.fillNewSlot(usedSlots, item, amt, iID));
+						usedSlots++;
+						this.usedSlots++;
 						amt = 0;
 						break;
 					}
 				}else{
 					break;
 				}
-			}			
+			}
+			
+			this.slots.put(item, bankslots);
 			
 			if(amt == 0) {
+				this.isUpdated = true;
 				//Call to Sync in case caching is off for bank accounts
 				GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
 				return null;
@@ -210,13 +223,91 @@ public class UserAccount {
 		}
 	}
 	
-	public void get(ItemID iID, int amount) {
+	public int has(ItemID iID) {
 		if(iID == null)
-			return;
+			return 0;
 		
 		String item = GiantBanks.getPlugin().getItemHandler().getItemNameByID(iID.getId(), iID.getType());
 		
-		//Should probably return an ItemStack I think
+		if(!this.slots.containsKey(item)) {
+			return 0;
+		}
+
+		int amt = 0;
+		ArrayList<BankSlot> bankslots = this.slots.get(item);
+		for(BankSlot bS  : bankslots) {
+			if(!bS.contains(iID)) {
+				//Durability missmatch? Or perhaps a misscache?
+				//What ever the case, we need to remove that entry from the cache!
+				bankslots.remove(bS);
+				continue;
+			}
+			
+			amt += bS.getAmount();
+		}
+		
+		
+		return amt;
+	}
+	
+	public String get(ItemID iID, int amount) {
+		if(iID == null)
+			return "";
+		
+		String item = GiantBanks.getPlugin().getItemHandler().getItemNameByID(iID.getId(), iID.getType());
+		
+		if(!this.slots.containsKey(item)) {
+			return "";
+		}
+
+		int amt = amount;
+		ArrayList<BankSlot> bankslots = this.slots.get(item);
+		
+		for(BankSlot bS  : bankslots) {
+			if(!bS.contains(iID)) {
+				//Durability missmatch? Or perhaps a misscache?
+				//What ever the case, we need to remove that entry from the cache!
+				bankslots.remove(bS);
+				continue;
+			}
+			
+			int a = bS.getAmount() - amt;
+			
+			if(a <= 0) {
+				amt -= bS.getAmount();
+				bS.setAmount(0);
+				
+				//Slot no longer holds any data, keeping it makes no sense.
+				bankslots.remove(bS);
+				this.usedSlots--;
+			}else{
+				bS.setAmount(amt, false);
+				amt = 0;
+				
+				if(bS.getAmount() <= 0) {
+					//Slot no longer holds any data, keeping it makes no sense.
+					bankslots.remove(bS);
+					this.usedSlots--;
+				}
+				
+				break;
+			}
+			
+			if(amt == 0)
+				break;
+		}
+		
+		this.slots.put(item, bankslots);
+		
+		if(amt == 0) {
+			//Call to Sync in case caching is off for bank accounts
+			this.isUpdated = true;
+			GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
+			return null;
+		}else{
+			//Didn't have enough return a message!
+			return "";
+		}
 	}
 	
 	public void getAll(ItemID iID) {
