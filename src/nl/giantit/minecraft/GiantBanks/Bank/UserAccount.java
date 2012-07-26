@@ -6,7 +6,6 @@ import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class UserAccount {
 
@@ -311,6 +310,9 @@ public class UserAccount {
 	}
 	
 	public void getAll(ItemID iID) {
+		if(iID == null)
+			return;
+		
 		//Should probably return an ArrayList<ItemStack>?
 	}
 	
