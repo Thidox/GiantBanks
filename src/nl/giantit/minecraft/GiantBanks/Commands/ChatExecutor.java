@@ -29,6 +29,10 @@ public class ChatExecutor {
 			Get.exec(player, args);
 			/*Heraut.say(player, "Ok, we have no friggin clue what you are on about, so what about we just send you our help page?");
 			help.showHelp(player, args);*/
+		}else if(Misc.isAnyIgnoreCase(args[0], "getall", "ga", "-ga")) {
+			GetAll.exec(player, args);
+			/*Heraut.say(player, "Ok, we have no friggin clue what you are on about, so what about we just send you our help page?");
+			help.showHelp(player, args);*/
 		}else{
 			//Heraut.say(player, "Ok, we have no friggin clue what you are on about, so what about we just send you our help page?");
 			Help.showHelp(player, args);
