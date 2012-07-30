@@ -2,6 +2,8 @@ package nl.giantit.minecraft.GiantBanks.Bank;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.core.Items.ItemID;
+import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
+import nl.giantit.minecraft.GiantBanks.core.Misc.Messages.msgType;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbType;
 
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ public class UserAccount {
 
 	private static HashMap<String, UserAccount> accounts = new HashMap<String, UserAccount>();
 	
+	private Messages mH = GiantBanks.getPlugin().getMsgHandler();
 	private Integer aID;
 	private String owner;
 	private String rawData;
@@ -114,9 +117,9 @@ public class UserAccount {
 		return this.isUpdated;
 	}
 	
-	public String add(ItemID iID, int amount) {
+	public int add(ItemID iID, int amount) {
 		if(iID == null)
-			return "";
+			return -2;
 		
 		String item = GiantBanks.getPlugin().getItemHandler().getItemNameByID(iID.getId(), iID.getType());
 		int mS = this.type.getMaxSlots();
@@ -175,17 +178,17 @@ public class UserAccount {
 				//Call to Sync in case caching is off for bank accounts
 				this.isUpdated = true;
 				GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
-				return null;
+				return 0;
 			}else{
 				if(amt < amount) {
 					//message saying x items have not been added
 					this.isUpdated = true;
 					GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
-					return null;
+					return amt;
 				}
 			}
 			
-			return ""; //Return message saying no available slots.
+			return -1; //Return message saying no available slots.
 		}else{
 			ArrayList<BankSlot> bankslots = new ArrayList<BankSlot>();
 			while(amt > 0) {
@@ -214,10 +217,10 @@ public class UserAccount {
 				this.isUpdated = true;
 				//Call to Sync in case caching is off for bank accounts
 				GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
-				return null;
+				return 0;
 			}else{
 				//message saying x items have not been added
-				return "";
+				return amt;
 			}
 		}
 	}
@@ -234,7 +237,7 @@ public class UserAccount {
 
 		int amt = 0;
 		ArrayList<BankSlot> bankslots = this.slots.get(item);
-		for(BankSlot bS  : bankslots) {
+		for(BankSlot bS : bankslots) {
 			if(!bS.contains(iID)) {
 				//Durability missmatch? Or perhaps a misscache?
 				//What ever the case, we need to remove that entry from the cache!
@@ -249,14 +252,14 @@ public class UserAccount {
 		return amt;
 	}
 	
-	public String get(ItemID iID, int amount) {
+	public int get(ItemID iID, int amount) {
 		if(iID == null)
-			return "";
+			return -3;
 		
 		String item = GiantBanks.getPlugin().getItemHandler().getItemNameByID(iID.getId(), iID.getType());
 		
 		if(!this.slots.containsKey(item)) {
-			return "";
+			return -2;
 		}
 
 		int amt = amount;
@@ -302,18 +305,17 @@ public class UserAccount {
 			//Call to Sync in case caching is off for bank accounts
 			this.isUpdated = true;
 			GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
-			return null;
+			return 0;
 		}else{
-			//Didn't have enough return a message!
-			return "";
+			return amt;
 		}
 	}
 	
-	public void getAll(ItemID iID) {
+	public String getAll(ItemID iID) {
 		if(iID == null)
-			return;
+			return mH.getMsg(msgType.ERROR, "ItemInvalid");
 		
-		//Should probably return an ArrayList<ItemStack>?
+		return mH.getMsg(msgType.ERROR, "unknown");
 	}
 	
 	public static UserAccount getUserAccount(String p) {
