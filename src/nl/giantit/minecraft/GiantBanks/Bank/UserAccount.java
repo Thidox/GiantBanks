@@ -254,12 +254,12 @@ public class UserAccount {
 	
 	public int get(ItemID iID, int amount) {
 		if(iID == null)
-			return -3;
+			return -2;
 		
 		String item = GiantBanks.getPlugin().getItemHandler().getItemNameByID(iID.getId(), iID.getType());
 		
 		if(!this.slots.containsKey(item)) {
-			return -2;
+			return -1;
 		}
 
 		int amt = amount;
@@ -311,11 +311,37 @@ public class UserAccount {
 		}
 	}
 	
-	public String getAll(ItemID iID) {
+	public int getAll(ItemID iID) {
 		if(iID == null)
-			return mH.getMsg(msgType.ERROR, "ItemInvalid");
+			return -2;
 		
-		return mH.getMsg(msgType.ERROR, "unknown");
+		String item = GiantBanks.getPlugin().getItemHandler().getItemNameByID(iID.getId(), iID.getType());
+		
+		if(!this.slots.containsKey(item)) {
+			return -1;
+		}
+		
+		int total = 0;
+		ArrayList<BankSlot> bankslots = this.slots.remove(item);
+		
+		for(BankSlot bS : bankslots) {
+			if(!bS.contains(iID)) {
+				//Durability missmatch? Or perhaps a misscache?
+				//What ever the case, we need to remove that entry from the cache!
+				bankslots.remove(bS);
+				continue;
+			}
+			
+			total += bS.getAmount();
+			
+			//Slot no longer holds any data, keeping it makes no sense.
+			this.usedSlots--;
+		}
+		
+		//Call to Sync in case caching is off for bank accounts
+		this.isUpdated = true;
+		GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
+		return total;
 	}
 	
 	public static UserAccount getUserAccount(String p) {
