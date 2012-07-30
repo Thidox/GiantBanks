@@ -2,14 +2,20 @@ package nl.giantit.minecraft.GiantBanks.Commands.Chat;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.Bank.UserAccount;
-import nl.giantit.minecraft.GiantBanks.core.Items.Items;
 import nl.giantit.minecraft.GiantBanks.core.Items.ItemID;
+import nl.giantit.minecraft.GiantBanks.core.Items.Items;
+import nl.giantit.minecraft.GiantBanks.core.Misc.Heraut;
+import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
+import nl.giantit.minecraft.GiantBanks.core.Misc.Messages.msgType;
 
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 
 public class Store {
 	
 	private static Items iH = GiantBanks.getPlugin().getItemHandler();
+	private static Messages mH = GiantBanks.getPlugin().getMsgHandler();
 
 	public static void exec(Player p, String[] args) {
 		if(args.length > 2) {
@@ -97,11 +103,11 @@ public class Store {
 					if(iH.isValidItem(id, type)) {
 						item = iH.getItemNameByID(id, type);
 					}else{
-						p.sendMessage("Item invalid you fuck!");
+						Heraut.say(p, mH.getMsg(msgType.ERROR, "itemInvalid"));
 						return;
 					}
 				}else{
-					p.sendMessage("Item id is invalid wanker!");
+					Heraut.say(p, mH.getMsg(msgType.ERROR, "itemIDInvalid"));
 					return;
 				}
 			}
@@ -115,20 +121,39 @@ public class Store {
 			
 			if(iID != null) {
 				if(amount > 0) {
-					String m = uA.add(iID, amount);
-					if(null == m) {
-						p.sendMessage("Successfully stored " + String.valueOf(amount) + " of " + item + "!");
+					int status = uA.add(iID, amount);
+					if(0 == status) {
+						HashMap<String, String> data = new HashMap<String, String>();
+						data.put("amount", String.valueOf(amount));
+						data.put("item", item);
+						Heraut.say(p, mH.getMsg(msgType.MAIN, "itemStored", data));
 						return;
 					}else{
-						p.sendMessage("Meh!");
-						p.sendMessage(m);
+						HashMap<String, String> data = new HashMap<String, String>();
+						data.put("amount", String.valueOf(status));
+						data.put("item", item);
+						
+						switch(status) {
+							case -2:
+								Heraut.say(p, mH.getMsg(msgType.ERROR, "ItemInvalid"));
+								break;
+							case -1:
+								Heraut.say(p, mH.getMsg(msgType.ERROR, "noAvailableSlots", data));
+								break;
+							default:
+								Heraut.say(p, mH.getMsg(msgType.ERROR, "notEnoughSpace", data));
+								Heraut.say(p, mH.getMsg(msgType.MAIN, "itemStored", data));
+								//Give user his [status] of item [item]
+								break;
+						}
+						
 					}
 				}else{
-					p.sendMessage("Srsly... I need more then 0 of that to store!");
+					Heraut.say(p, mH.getMsg(msgType.ERROR, "zeroAmount"));
 					return;
 				}
 			}else{
-				p.sendMessage("Item invalid you fucktard!");
+				Heraut.say(p, mH.getMsg(msgType.ERROR, "itemInvalid"));
 				return;
 			}
 		}
