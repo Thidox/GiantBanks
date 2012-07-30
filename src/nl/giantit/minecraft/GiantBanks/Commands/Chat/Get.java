@@ -146,7 +146,7 @@ public class Get {
 									Heraut.say(p, mH.getMsg(msgType.ERROR, "noItemQuantity", data));
 									break;
 								default:
-									Heraut.say(p, mH.getMsg(msgType.ERROR, "itemStored", data));
+									Heraut.say(p, mH.getMsg(msgType.ERROR, "itemObtained", data));
 									//Give user his [status] of item [item]
 									break;
 							}
