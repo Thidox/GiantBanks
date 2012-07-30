@@ -130,6 +130,7 @@ public class Store {
 						return;
 					}else{
 						HashMap<String, String> data = new HashMap<String, String>();
+						data.put("left", String.valueOf(status));
 						data.put("amount", String.valueOf(amount - status));
 						data.put("item", item);
 						

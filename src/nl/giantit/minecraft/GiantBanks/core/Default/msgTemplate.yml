@@ -11,7 +11,7 @@ errors:
     notEnoughItems: C_REDYou don't have enough C_WHITE%itemC_RED, you have only C_WHITE%amount C_REDof that!
     noItemQuantity: C_REDYou don't have any C_WHITE%itemC_RED!
     noAvailableSlots: C_REDYou don't have enough slots left in your bank account!
-    notEnoughSpace: C_REDYou don't have enough space left in your bank account!
+    notEnoughSpace: C_REDYou don't have enough space left in your bank account! C_WHITE%left C_REDdid not get stored!
     noPermissions: C_REDWe are sorry but you do not have access to that command (C_YELLOW%commandC_RED)!
     syntaxError: C_REDPlease use the appropriate syntax for the C_YELLOW%command C_REDcommand!
     unkown: C_REDWe are sorry but an unknown error occured!
