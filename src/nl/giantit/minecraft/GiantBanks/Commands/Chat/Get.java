@@ -2,14 +2,20 @@ package nl.giantit.minecraft.GiantBanks.Commands.Chat;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.Bank.UserAccount;
-import nl.giantit.minecraft.GiantBanks.core.Items.Items;
 import nl.giantit.minecraft.GiantBanks.core.Items.ItemID;
+import nl.giantit.minecraft.GiantBanks.core.Items.Items;
+import nl.giantit.minecraft.GiantBanks.core.Misc.Heraut;
+import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
+import nl.giantit.minecraft.GiantBanks.core.Misc.Messages.msgType;
 
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 
 public class Get {
 	
 	private static Items iH = GiantBanks.getPlugin().getItemHandler();
+	private static Messages mH = GiantBanks.getPlugin().getMsgHandler();
 
 	public static void exec(Player p, String[] args) {
 		if(args.length > 2) {
@@ -97,11 +103,11 @@ public class Get {
 					if(iH.isValidItem(id, type)) {
 						item = iH.getItemNameByID(id, type);
 					}else{
-						p.sendMessage("Item invalid you fuck!");
+						Heraut.say(p, mH.getMsg(msgType.ERROR, "itemInvalid"));
 						return;
 					}
 				}else{
-					p.sendMessage("Item id is invalid wanker!");
+					Heraut.say(p, mH.getMsg(msgType.ERROR, "itemIDInvalid"));
 					return;
 				}
 			}
@@ -117,29 +123,53 @@ public class Get {
 				if(amount > 0) {
 					int h = uA.has(iID);
 					if(h >= amount) { 
-						String m = uA.get(iID, amount);
-						if(null == m) {
-							p.sendMessage("Successfully obtained " + String.valueOf(amount) + " of " + item + "!");
+						int status = uA.get(iID, amount);
+						
+						if(0 == status) {
+							HashMap<String, String> data = new HashMap<String, String>();
+							data.put("amount", String.valueOf(amount));
+							data.put("item", item);
+							Heraut.say(p, mH.getMsg(msgType.MAIN, "itemObtained", data));
+							//Give user his [amount] of item [item]
 							return;
 						}else{
-							p.sendMessage("Meh!");
-							p.sendMessage(m);
+							String m = "";
+							HashMap<String, String> data = new HashMap<String, String>();
+							data.put("amount", String.valueOf(status));
+							data.put("item", item);
+							
+							switch(status) {
+								case -2:
+									Heraut.say(p, mH.getMsg(msgType.ERROR, "ItemInvalid"));
+									break;
+								case -1:
+									Heraut.say(p, mH.getMsg(msgType.ERROR, "noItemQuantity", data));
+									break;
+								default:
+									Heraut.say(p, mH.getMsg(msgType.ERROR, "itemStored", data));
+									//Give user his [status] of item [item]
+									break;
+							}
+							
 							return;
 						}
 					}else{
+						HashMap<String, String> data = new HashMap<String, String>();
+						data.put("amount", String.valueOf(h));
+						data.put("item", item);
 						if(h > 0) {
-							p.sendMessage("You don't have enough " + item + ", you have only " + h + " of that!");
+							Heraut.say(p, mH.getMsg(msgType.ERROR, "notEnoughItems", data));
 						}else{
-							p.sendMessage("You don't have any " + item + "!");
+							Heraut.say(p, mH.getMsg(msgType.ERROR, "noItemQuantity", data));
 						}
 						return;
 					}
 				}else{
-					p.sendMessage("Srsly... I need more then 0 of that to store!");
+					Heraut.say(p, mH.getMsg(msgType.ERROR, "zeroAmount"));
 					return;
 				}
 			}else{
-				p.sendMessage("Item invalid you fucktard!");
+				Heraut.say(p, mH.getMsg(msgType.ERROR, "itemInvalid"));
 				return;
 			}
 		}
