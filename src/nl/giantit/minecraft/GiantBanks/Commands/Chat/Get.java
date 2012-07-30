@@ -135,7 +135,7 @@ public class Get {
 						}else{
 							String m = "";
 							HashMap<String, String> data = new HashMap<String, String>();
-							data.put("amount", String.valueOf(status));
+							data.put("amount", String.valueOf(amount - status));
 							data.put("item", item);
 							
 							switch(status) {
