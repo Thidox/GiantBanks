@@ -2,10 +2,10 @@ package nl.giantit.minecraft.GiantBanks;
 
 import nl.giantit.minecraft.GiantBanks.Commands.ChatExecutor;
 import nl.giantit.minecraft.GiantBanks.Commands.ConsoleExecutor;
-//import nl.giantit.minecraft.GiantBanks.Listeners.ServerListener;
 import nl.giantit.minecraft.GiantBanks.core.config;
 import nl.giantit.minecraft.GiantBanks.core.Database.Database;
 import nl.giantit.minecraft.GiantBanks.core.Items.Items;
+import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbHandler;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbInit;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.Sync.Sync;
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+//import nl.giantit.minecraft.GiantBanks.Listeners.ServerListener;
 
 public class GiantBanks extends JavaPlugin {
 
@@ -40,7 +41,7 @@ public class GiantBanks extends JavaPlugin {
 	private ConsoleExecutor console;
 	private Items itemHandler;
 	//private Eco econHandler;
-	//private Messages msgHandler;
+	private Messages msgHandler;
 	//private Locationer locHandler;
 	private int tID;
 	private String name, dir, pubName;
@@ -93,8 +94,8 @@ public class GiantBanks extends JavaPlugin {
 			chat = new ChatExecutor(this);
 			console = new ConsoleExecutor(this);
 			itemHandler = new Items(this);
-			/*econHandler = new Eco(this);
-			msgHandler = new Messages(this);*/
+			//econHandler = new Eco(this);
+			msgHandler = new Messages(this);
 			
 			//getServer().getPluginManager().registerEvents(new ServerListener(this), this);
 			
@@ -174,13 +175,13 @@ public class GiantBanks extends JavaPlugin {
 	
 	/*public Eco getEcoHandler() {
 		return this.econHandler;
-	}
+	}*/
 	
 	public Messages getMsgHandler() {
 		return this.msgHandler;
 	}
 	
-	public Locationer getLocHandler() {
+	/*public Locationer getLocHandler() {
 		return this.locHandler;
 	}*/
 	
