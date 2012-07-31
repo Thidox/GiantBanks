@@ -7,8 +7,12 @@ import nl.giantit.minecraft.GiantBanks.core.Items.Items;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Heraut;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages.msgType;
+import nl.giantit.minecraft.GiantBanks.core.Tools.InventoryHandler;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 import java.util.HashMap;
 
@@ -106,6 +110,20 @@ public class GetAll {
 					int status = uA.getAll(iID);
 					
 					if(status >= 1) {
+						ItemStack iStack;
+						Inventory inv = p.getInventory();
+
+						if(iID.getType() != null && iID.getType()  != -1) {
+							if(iID.getId() != 373)
+								iStack = new MaterialData(iID.getId(), (byte) ((int) iID.getType() )).toItemStack(status);
+							else
+								iStack = new ItemStack(iID.getId(), status, (short) ((int) iID.getType() ));
+						}else{
+							iStack = new ItemStack(iID.getId(), status);
+						}
+						
+						InventoryHandler.storeItem(p, inv, iStack);
+						
 						HashMap<String, String> data = new HashMap<String, String>();
 						data.put("amount", String.valueOf(status));
 						data.put("item", item);
@@ -127,6 +145,19 @@ public class GetAll {
 								Heraut.say(p, mH.getMsg(msgType.ERROR, "noItemQuantity", data));
 								break;
 							default:
+								ItemStack iStack;
+								Inventory inv = p.getInventory();
+
+								if(iID.getType() != null && iID.getType()  != -1) {
+									if(iID.getId() != 373)
+										iStack = new MaterialData(iID.getId(), (byte) ((int) iID.getType() )).toItemStack(status);
+									else
+										iStack = new ItemStack(iID.getId(), status, (short) ((int) iID.getType() ));
+								}else{
+									iStack = new ItemStack(iID.getId(), status);
+								}
+								
+								InventoryHandler.storeItem(p, inv, iStack);
 								Heraut.say(p, mH.getMsg(msgType.ERROR, "itemObtained", data));
 								//Give user his [status] of item [item]
 								break;
