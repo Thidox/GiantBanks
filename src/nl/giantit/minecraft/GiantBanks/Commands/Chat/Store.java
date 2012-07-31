@@ -7,8 +7,12 @@ import nl.giantit.minecraft.GiantBanks.core.Items.Items;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Heraut;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages.msgType;
+import nl.giantit.minecraft.GiantBanks.core.Tools.InventoryHandler;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 import java.util.HashMap;
 
@@ -121,33 +125,57 @@ public class Store {
 			
 			if(iID != null) {
 				if(amount > 0) {
-					int status = uA.add(iID, amount);
-					if(0 == status) {
-						HashMap<String, String> data = new HashMap<String, String>();
-						data.put("amount", String.valueOf(amount));
-						data.put("item", item);
-						Heraut.say(p, mH.getMsg(msgType.MAIN, "itemStored", data));
-						return;
+
+					ItemStack iStack;
+					Inventory inv = p.getInventory();
+
+					if(iID.getType() != null && iID.getType()  != -1) {
+						if(iID.getId() != 373)
+							iStack = new MaterialData(iID.getId(), (byte) ((int) iID.getType() )).toItemStack(amount);
+						else
+							iStack = new ItemStack(iID.getId(), amount, (short) ((int) iID.getType() ));
+					}else{
+						iStack = new ItemStack(iID.getId(), amount);
+					}
+					
+					int has = InventoryHandler.hasAmount(inv, iStack);
+					if(has >= amount) {
+						int status = uA.add(iID, amount);
+						if(0 == status) {
+							InventoryHandler.removeItem(inv, iStack);
+							HashMap<String, String> data = new HashMap<String, String>();
+							data.put("amount", String.valueOf(amount));
+							data.put("item", item);
+							Heraut.say(p, mH.getMsg(msgType.MAIN, "itemStored", data));
+							return;
+						}else{
+							HashMap<String, String> data = new HashMap<String, String>();
+							data.put("left", String.valueOf(status));
+							data.put("amount", String.valueOf(amount - status));
+							data.put("item", item);
+							
+							switch(status) {
+								case -2:
+									Heraut.say(p, mH.getMsg(msgType.ERROR, "ItemInvalid"));
+									break;
+								case -1:
+									Heraut.say(p, mH.getMsg(msgType.ERROR, "noAvailableSlots", data));
+									break;
+								default:
+									iStack.setAmount(amount - status);
+									InventoryHandler.removeItem(inv, iStack);
+									Heraut.say(p, mH.getMsg(msgType.ERROR, "notEnoughSpace", data));
+									Heraut.say(p, mH.getMsg(msgType.MAIN, "itemStored", data));
+									//Give user his [status] of item [item]
+									break;
+							}
+						}	
 					}else{
 						HashMap<String, String> data = new HashMap<String, String>();
-						data.put("left", String.valueOf(status));
-						data.put("amount", String.valueOf(amount - status));
+						data.put("amount", String.valueOf(has));
 						data.put("item", item);
 						
-						switch(status) {
-							case -2:
-								Heraut.say(p, mH.getMsg(msgType.ERROR, "ItemInvalid"));
-								break;
-							case -1:
-								Heraut.say(p, mH.getMsg(msgType.ERROR, "noAvailableSlots", data));
-								break;
-							default:
-								Heraut.say(p, mH.getMsg(msgType.ERROR, "notEnoughSpace", data));
-								Heraut.say(p, mH.getMsg(msgType.MAIN, "itemStored", data));
-								//Give user his [status] of item [item]
-								break;
-						}
-						
+						Heraut.say(p, mH.getMsg(msgType.ERROR, "notEnoughItems", data));
 					}
 				}else{
 					Heraut.say(p, mH.getMsg(msgType.ERROR, "zeroAmount"));
