@@ -7,8 +7,12 @@ import nl.giantit.minecraft.GiantBanks.core.Items.Items;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Heraut;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages.msgType;
+import nl.giantit.minecraft.GiantBanks.core.Tools.InventoryHandler;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 import java.util.HashMap;
 
@@ -126,6 +130,20 @@ public class Get {
 						int status = uA.get(iID, amount);
 						
 						if(0 == status) {
+							ItemStack iStack;
+							Inventory inv = p.getInventory();
+	
+							if(iID.getType() != null && iID.getType()  != -1) {
+								if(iID.getId() != 373)
+									iStack = new MaterialData(iID.getId(), (byte) ((int) iID.getType() )).toItemStack(amount);
+								else
+									iStack = new ItemStack(iID.getId(), amount, (short) ((int) iID.getType() ));
+							}else{
+								iStack = new ItemStack(iID.getId(), amount);
+							}
+							
+							InventoryHandler.storeItem(p, inv, iStack);
+							
 							HashMap<String, String> data = new HashMap<String, String>();
 							data.put("amount", String.valueOf(amount));
 							data.put("item", item);
@@ -133,7 +151,6 @@ public class Get {
 							//Give user his [amount] of item [item]
 							return;
 						}else{
-							String m = "";
 							HashMap<String, String> data = new HashMap<String, String>();
 							data.put("amount", String.valueOf(amount - status));
 							data.put("item", item);
@@ -146,6 +163,19 @@ public class Get {
 									Heraut.say(p, mH.getMsg(msgType.ERROR, "noItemQuantity", data));
 									break;
 								default:
+									ItemStack iStack;
+									Inventory inv = p.getInventory();
+			
+									if(iID.getType() != null && iID.getType()  != -1) {
+										if(iID.getId() != 373)
+											iStack = new MaterialData(iID.getId(), (byte) ((int) iID.getType() )).toItemStack(amount - status);
+										else
+											iStack = new ItemStack(iID.getId(), amount - status, (short) ((int) iID.getType() ));
+									}else{
+										iStack = new ItemStack(iID.getId(), amount - status);
+									}
+									
+									InventoryHandler.storeItem(p, inv, iStack);
 									Heraut.say(p, mH.getMsg(msgType.ERROR, "itemObtained", data));
 									//Give user his [status] of item [item]
 									break;
