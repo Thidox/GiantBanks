@@ -8,10 +8,11 @@ errors:
     itemIDInvalid: C_REDThe item id that you have entered is invalid!
     itemInvalid: C_REDThe item you requested does not seem to exist...
     zeroAmount: C_REDWe are sorry, but we need atleast C_WHITE1 C_REDitem if we are to store anything for you!
+    ItemNotAllowed: C_REDWe are sorry, but you are not allowed to store that item!
     notEnoughItems: C_REDYou don't have enough C_WHITE%itemC_RED, you have only C_WHITE%amount C_REDof that!
     noItemQuantity: C_REDYou don't have any C_WHITE%itemC_RED!
     noAvailableSlots: C_REDYou don't have enough slots left in your bank account!
-    notEnoughSpace: C_REDYou don't have enough space left in your bank account! C_WHITE%left C_REDdid not get stored!
+    notEnoughSpace: C_REDYou don't have enough space left in your bank account! C_WHITE%left %item C_REDdid not get stored!
     infFull: C_REDWe are sorry buy your inventory is full! We will drop the remaining items for you!
     noPermissions: C_REDWe are sorry but you do not have access to that command (C_YELLOW%commandC_RED)!
     syntaxError: C_REDPlease use the appropriate syntax for the C_YELLOW%command C_REDcommand!
