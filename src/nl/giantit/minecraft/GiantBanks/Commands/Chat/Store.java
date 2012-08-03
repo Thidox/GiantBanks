@@ -155,6 +155,9 @@ public class Store {
 							data.put("item", item);
 							
 							switch(status) {
+								case -3:
+									Heraut.say(p, mH.getMsg(msgType.ERROR, "ItemNotAllowed"));
+									break;
 								case -2:
 									Heraut.say(p, mH.getMsg(msgType.ERROR, "ItemInvalid"));
 									break;
