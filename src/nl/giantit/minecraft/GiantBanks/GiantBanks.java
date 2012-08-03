@@ -9,6 +9,7 @@ import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbHandler;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbInit;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.Sync.Sync;
+import nl.giantit.minecraft.GiantBanks.core.Updater.Updater;
 import nl.giantit.minecraft.GiantBanks.core.perms.PermHandler;
 import nl.giantit.minecraft.GiantBanks.core.perms.Permission;
 
@@ -33,6 +34,8 @@ public class GiantBanks extends JavaPlugin {
 	
 	private static GiantBanks plugin;
 	private static Server Server;
+	
+	private Updater updHandler;
 	private Database db;
 	private dbHandler dH;
 	private Sync sync;
@@ -78,9 +81,13 @@ public class GiantBanks extends JavaPlugin {
 		
 		try {
 			conf.loadConfig(configFile);
-			this.db = Database.Obtain(null, (HashMap<String, String>) conf.getMap(this.name + ".db"));
-			new dbInit(this);
 			pubName = conf.getString(this.name + ".global.name");
+			
+			this.db = Database.Obtain(null, (HashMap<String, String>) conf.getMap(this.name + ".db"));
+			this.updHandler = new Updater(this);
+			itemHandler = new Items(this);
+			
+			new dbInit(this);
 			
 			if(conf.getBoolean(this.name + ".permissions.usePermissions")) {
 				permHandler = new PermHandler(this, conf.getString(this.name + ".permissions.Engine"), conf.getBoolean(this.name + ".permissions.opHasPerms"));
@@ -93,7 +100,6 @@ public class GiantBanks extends JavaPlugin {
 			
 			chat = new ChatExecutor(this);
 			console = new ConsoleExecutor(this);
-			itemHandler = new Items(this);
 			//econHandler = new Eco(this);
 			msgHandler = new Messages(this);
 			
@@ -151,6 +157,10 @@ public class GiantBanks extends JavaPlugin {
 	
 	public Boolean useLocation() {
 		return this.useLoc;
+	}
+	
+	public Updater getUpdater() {
+		return this.updHandler;
 	}
 	
 	public Database getDB() {
