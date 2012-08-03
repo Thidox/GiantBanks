@@ -10,10 +10,23 @@ public class PermHandler {
 	private Engines engine;
 	
 	public enum Engines {
-		GROUP_MANAGER,
-		PERMISSIONSEX,
-		SPERM,
-		NOPERM
+		GROUP_MANAGER("Essentials Group Manager"),
+		PERMISSIONSEX("Permissions Ex"),
+		ZPERM("zPermissions"),
+		BPERM("bPermissions"),
+		SPERM("Bukkit Superperms"),
+		NOPERM("No Permissions");
+		
+		private String name;
+		
+		private Engines(String s) {
+			this.name = s;
+		}
+		
+		@Override
+		public String toString() {
+			return this.name;
+		}
 	}
 	
 	private boolean packageExists(String...Packages) {
@@ -32,6 +45,10 @@ public class PermHandler {
 			return Engines.GROUP_MANAGER;
 		}else if(engine.equalsIgnoreCase("PERMISSIONSEX")) {
 			return Engines.PERMISSIONSEX;
+		}else if(engine.equalsIgnoreCase("ZPERMISSIONS")) {
+			return Engines.ZPERM;
+		}else if(engine.equalsIgnoreCase("BPERMISSIONS")) {
+			return Engines.BPERM;
 		}else if(engine.equalsIgnoreCase("SPERM")) {
 			return Engines.SPERM;
 		}else if(engine.equalsIgnoreCase("NOPERM")) {
@@ -56,6 +73,16 @@ public class PermHandler {
 					this.Engine = new pexEngine(this.plugin, opHasPerms);
 				}
 				break;
+			case ZPERM:
+				if(packageExists("org.tyrannyofheaven.bukkit.zPermissions.ZPermissionsPlugin")) {
+					this.Engine = new zpEngine(this.plugin, opHasPerms);
+				}
+				break;
+			case BPERM:
+				if(packageExists("de.bananaco.bpermissions.imp.Permissions")) {
+					this.Engine = new bpEngine(this.plugin, opHasPerms);
+				}
+				break;
 			case NOPERM:
 				this.Engine = new npEngine(this.plugin, opHasPerms);
 				break;
@@ -68,6 +95,10 @@ public class PermHandler {
 	
 	public Permission getEngine() {
 		return Engine;
+	}
+	
+	public String getEngineName() {
+		return this.engine.toString();
 	}
 	
 	public boolean isEnabled() {
