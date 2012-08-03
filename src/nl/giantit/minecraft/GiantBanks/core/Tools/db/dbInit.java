@@ -3,6 +3,7 @@ package nl.giantit.minecraft.GiantBanks.core.Tools.db;
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.core.config;
 import nl.giantit.minecraft.GiantBanks.core.Database.drivers.iDriver;
+import nl.giantit.minecraft.GiantBanks.core.Updater.UpdateType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +12,6 @@ import java.util.logging.Level;
 public class dbInit {
 	
 	private iDriver dbDriver;
-	private double curS = 1.0, curI = 1.0, curD = 1.0;
 
 	private void init() {
 		if(!this.dbDriver.tableExists("#__versions")) {
@@ -249,28 +249,11 @@ public class dbInit {
 		}
 	}
 	
-	private void dbUpdateMySQL() {
-		//do some update stuff
-		
-	}
-	
-	private void dbUpdateSQLite() {
-		//do some update stuff
-		
-	}
-	
 	public dbInit(GiantBanks plugin) {
 		this.dbDriver = plugin.getDB().getEngine();
-		config conf = config.Obtain();
-		String driver = conf.getString(plugin.getName() + ".db.driver");
 
 		this.init();
-		
-		if(driver.equalsIgnoreCase("MySQL")) {
-			this.dbUpdateMySQL();
-		}else{
-			this.dbUpdateSQLite();
-		}
+		plugin.getUpdater().Update(UpdateType.DATABASE);
 	}
 	
 }
