@@ -3,6 +3,7 @@ package nl.giantit.minecraft.GiantBanks.Bank;
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.core.Items.ItemID;
 import nl.giantit.minecraft.GiantBanks.core.Items.Items;
+import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ public class AccountType {
 
 	private static HashMap<Integer, String> typeByID = new HashMap<Integer, String>();
 	private static HashMap<String, AccountType> types = new HashMap<String, AccountType>();
+	private static AccountType last;
 	
 	private HashMap<String, Integer> data = new HashMap<String, Integer>();
 	private Items iH = GiantBanks.getPlugin().getItemHandler();
@@ -20,6 +22,7 @@ public class AccountType {
 	private int maxSlots = 20;
 	private int maxPerSlot = 20;
 	private Boolean isUpdated = false;
+	private Boolean isNew = false;
 
 	private ArrayList<String> allowed = new ArrayList<String>();
 	private ArrayList<String> disallowed = new ArrayList<String>(); 
@@ -64,6 +67,92 @@ public class AccountType {
 		return this.name;
 	}
 	
+	public Boolean isNew() {
+		return this.isNew;
+	}
+	
+	public Boolean setNew(Boolean n) {
+		this.isNew = n;
+		return this.isNew;
+	}
+	
+	public Boolean isUpdated() {
+		return this.isUpdated;
+	}
+	
+	public Boolean setUpdated(Boolean updated) {
+		this.isUpdated = updated;
+		return this.isUpdated;
+	}
+	
+	public int setMaxSlots(int ms) {
+		this.isUpdated = true;
+		this.maxSlots = ms;
+
+		GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
+		return this.maxSlots;
+	}
+	
+	public int setMaxPerSlots(int mps) {
+		this.isUpdated = true;
+		this.maxPerSlot = mps;
+		
+		GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
+		return this.maxPerSlot;
+	}
+	
+	public void setStorable(Boolean allow, ItemID item) {
+		if(item == null)
+			return;
+		
+		this.setStorable(allow, iH.getItemNameByID(item.getId(), (null == item.getType() ? null : item.getType())));
+	}
+	
+	public void setStorable(Boolean allow, String item) {
+		if(item == null)
+			return;
+		
+		if(allow) {
+			if(this.allowed.contains(item))
+				return;
+			
+			this.allowed.add(item);
+		}else{
+			if(this.disallowed.contains(item))
+				return;
+			
+			this.disallowed.add(item);
+		}
+		
+		this.isUpdated = true;
+		GiantBanks.getPlugin().getSync().callUpdate(dbType.TYPES);
+	}
+	
+	public int getMaxSlots() {
+		return this.maxSlots;
+	}
+	
+	public int getMaxPerSlot() {
+		return this.maxPerSlot;
+	}
+	
+	public String getStorable() {
+		String s = "";
+		if(this.allowed.size() > 0) {
+			for(String al : this.allowed) {
+				s += "+" + al + ";";
+			}
+		}
+		
+		if(this.disallowed.size() > 0) {
+			for(String dl : this.disallowed) {
+				s += "-" + dl + ";";
+			}
+		}
+		
+		return s;
+	}
+	
 	public Boolean isStorable(ItemID item) {
 		if(item == null)
 			return false;
@@ -85,12 +174,24 @@ public class AccountType {
 		return !disallowed.contains(item.toLowerCase());
 	}
 	
-	public int getMaxSlots() {
-		return this.maxSlots;
+	public static AccountType createAccountType(String p) {
+		return createAccountType(p, 20, 20);
 	}
 	
-	public int getMaxPerSlot() {
-		return this.maxPerSlot;
+	public static AccountType createAccountType(String p, int maxSlot) {
+		return createAccountType(p, maxSlot, 20);
+	}
+	
+	public static AccountType createAccountType(String p, int maxSlot, int maxPerSlot) {
+		return createAccountType(p, maxSlot, maxPerSlot, null);
+	}
+	
+	public static AccountType createAccountType(String p, int maxSlot, int maxPerSlot, String item) {
+		int id = last.getTypeID() + 1;
+		
+		AccountType aT = createAccountType(id, p, maxSlot, maxPerSlot, item);
+		aT.setNew(true);
+		return aT;
 	}
 	
 	public static AccountType createAccountType(int id, String p) {
@@ -110,6 +211,7 @@ public class AccountType {
 			AccountType AT = new AccountType(id, p, maxSlot, maxPerSlot, item);
 			types.put(p, AT);
 			typeByID.put(id, p);
+			last = AT;
 			return AT;
 		}
 		
@@ -134,5 +236,9 @@ public class AccountType {
 		}
 		
 		return null;
+	}
+	
+	public static HashMap<String, AccountType> getAllTypes() {
+		return types;
 	}
 }
