@@ -44,7 +44,7 @@ public class GetAll {
 					i++;
 					if(args.length - 1 >= i) {
 						try{
-							id = Integer.parseInt(args[i].replaceFirst("-a:", ""));
+							id = Integer.parseInt(args[i]);
 						}catch(NumberFormatException e) {
 							//ignore
 						}
@@ -63,7 +63,7 @@ public class GetAll {
 					i++;
 					if(args.length - 1 >= i) {
 						try{
-							type = Integer.parseInt(args[i].replaceFirst("-t:", ""));
+							type = Integer.parseInt(args[i]);
 						}catch(NumberFormatException e) {
 							//ignore
 						}
