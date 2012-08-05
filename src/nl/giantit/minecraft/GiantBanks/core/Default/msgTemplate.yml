@@ -2,6 +2,7 @@ version: 0.1
 main:
     itemStored: C_GREENSuccessfully stored C_WHITE%amount C_GREENof C_WHITE%itemC_GREEN!
     itemObtained: C_GREENSuccessfully obtained C_WHITE%amount C_GREENof C_WHITE%itemC_GREEN!
+    helpCommand: C_RED/%command C_YELLOW-C_WHITE %description
 admin:
     noMsgs: very true!
 errors:
