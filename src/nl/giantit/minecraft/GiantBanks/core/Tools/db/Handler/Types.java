@@ -31,6 +31,9 @@ public class Types implements IHandler {
 			if(!aT.isUpdated())
 				continue;
 			
+			if(aT.getName().equals("default"))
+				continue;
+			
 			aT.setUpdated(false);
 
 			int tID = aT.getTypeID();
@@ -89,6 +92,9 @@ public class Types implements IHandler {
 		HashMap<String, AccountType> aTypes = AccountType.getAllTypes();
 		
 		for(AccountType aT : aTypes.values()) {
+			if(aT.getName().equals("default"))
+				continue;
+			
 			aT.setUpdated(false);
 
 			int tID = aT.getTypeID();
