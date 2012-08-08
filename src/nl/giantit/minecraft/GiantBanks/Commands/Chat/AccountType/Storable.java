@@ -1,4 +1,4 @@
-package nl.giantit.minecraft.GiantBanks.Commands.Chat;
+package nl.giantit.minecraft.GiantBanks.Commands.Chat.AccountType;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.Bank.AccountType;

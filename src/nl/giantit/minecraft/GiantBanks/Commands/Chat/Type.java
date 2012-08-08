@@ -1,6 +1,7 @@
 package nl.giantit.minecraft.GiantBanks.Commands.Chat;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
+import nl.giantit.minecraft.GiantBanks.Commands.Chat.AccountType.Storable;
 import nl.giantit.minecraft.GiantBanks.Commands.Chat.AccountType.Update.Select;
 import nl.giantit.minecraft.GiantBanks.core.Items.Items;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
