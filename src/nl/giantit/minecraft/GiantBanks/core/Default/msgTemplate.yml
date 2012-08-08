@@ -4,7 +4,8 @@ main:
     itemObtained: C_GREENSuccessfully obtained C_WHITE%amount C_GREENof C_WHITE%itemC_GREEN!
     helpCommand: C_RED/%command C_YELLOW-C_WHITE %description
 admin:
-    typeSelected: C_GREENSuccessfully selected the type! C_WHITE(%typeID%colon %type)
+    typeSelected: C_GREENSuccessfully selected the type! C_WHITE(%id%colon %type)
+    storableSet: C_GREENSuccessfully %allow C_WHITE%item C_GREENto be stored for type C_WHITE%typeC_GREEN!
 errors:
     itemIDInvalid: C_REDThe item id that you have entered is invalid!
     itemInvalid: C_REDThe item you requested does not seem to exist...
@@ -17,6 +18,7 @@ errors:
     infFull: C_REDWe are sorry but your inventory is full! We will drop the remaining items for you!
     typeNotFound: C_REDWe are sorry, but we are unable to locate the type C_WHITE%typeC_RED!
     noTypeSelected: C_REDPlease select a Bank Account Type before you attempt modifying one!
+    storableFail: C_REDFailed to %allow C_WHITE%item C_REDto be stored for type C_WHITE%typeC_RED!
     noPermissions: C_REDWe are sorry but you do not have access to that command (C_YELLOW%commandC_RED)!
     syntaxError: C_REDPlease use the appropriate syntax for the C_YELLOW%command C_REDcommand!
     unkown: C_REDWe are sorry but an unknown error occured!
