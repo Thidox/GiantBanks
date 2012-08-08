@@ -23,16 +23,12 @@ public class ChatExecutor {
 			Help.showHelp(player, args);
 		}else if(Misc.isAnyIgnoreCase(args[0], "store", "stor", "sto", "st", "s", "-s")) {
 			Store.exec(player, args);
-			/*Heraut.say(player, "Ok, we have no friggin clue what you are on about, so what about we just send you our help page?");
-			help.showHelp(player, args);*/
 		}else if(Misc.isAnyIgnoreCase(args[0], "get", "ge", "g", "-g")) {
 			Get.exec(player, args);
-			/*Heraut.say(player, "Ok, we have no friggin clue what you are on about, so what about we just send you our help page?");
-			help.showHelp(player, args);*/
 		}else if(Misc.isAnyIgnoreCase(args[0], "getall", "ga", "-ga")) {
 			GetAll.exec(player, args);
-			/*Heraut.say(player, "Ok, we have no friggin clue what you are on about, so what about we just send you our help page?");
-			help.showHelp(player, args);*/
+		}else if(Misc.isAnyIgnoreCase(args[0], "type", "typ", "ty", "t", "-t")) {
+			Type.exec(player, args);
 		}else{
 			//Heraut.say(player, "Ok, we have no friggin clue what you are on about, so what about we just send you our help page?");
 			Help.showHelp(player, args);
