@@ -33,7 +33,7 @@ public class Select {
 				
 				if(sH.store(p.getName() + ".selectedType", aT)) {
 					HashMap<String, String> d = new HashMap<String, String>();
-					d.put("typeID", String.valueOf(aT.getTypeID()));
+					d.put("id", String.valueOf(aT.getTypeID()));
 					d.put("type", aT.getName());
 					
 					Heraut.say(p, mH.getMsg(msgType.ADMIN, "typeSelected", d));
