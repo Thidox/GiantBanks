@@ -1,0 +1,55 @@
+Basics:
+	* Make commands
+	    - Help command
+	        - Send help
+	        - Add required entries
+	    - Adding to account - done
+	       - Needs to take from player still - done
+	    - Taking from account - done
+	       - Needs to give to player still - done
+	       - Take all items from account - done
+	    - Checking items in account
+	    - Creating AccountTypes
+	    - Updating AccountTypes
+	    - Removing AccountTypes
+	        - Reset all using accounts to "Default"
+	            - Add ability to change reset type
+	    - Change AccountType for UserAccount
+	        - Add ability to change AccountType for all UserAccounts with given type. 
+
+	* Create data parsers for UserAccount and AccountType
+	    - UserAccount - done
+	    - AccountType - done
+	        - Add ability to limit allowed items - done
+	    - BankSlot - done
+
+	* Find best way to store data. - 99%
+	    - Kind of found.
+	
+	* Continue work on message template implementation
+
+Advanced: - On halt untill after basics done
+	* Create method that creates new bank account for players that have never logged in before
+	
+	* Create action logger
+	    - AccountType creation
+	    - AccountType modification
+	    - AccountType removal
+	    - UserAccount creation
+	    - UserAccount modifaction
+	    - UserAccount removal
+	    - UserAccount item storing
+	    - UserAccount item taking
+	    - UserAccount broken account errors
+	
+	* Implement GiantBanksLocation
+	    - Add ability to have aformentioned use GSL
+	    
+	* Add available message params to Messages debugging.
+	
+Possibles: - On halt untill after basics done
+    * Add language support?
+	
+Testing:
+	* Testing, testing and more testing! - Never finished!
+	    - Going great! :)
