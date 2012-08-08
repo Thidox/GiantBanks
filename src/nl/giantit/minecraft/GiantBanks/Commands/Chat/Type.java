@@ -1,7 +1,6 @@
 package nl.giantit.minecraft.GiantBanks.Commands.Chat;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.Commands.Chat.AccountType.Storable.Add;
 import nl.giantit.minecraft.GiantBanks.Commands.Chat.AccountType.Update.Select;
 import nl.giantit.minecraft.GiantBanks.core.Items.Items;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
@@ -25,11 +24,7 @@ public class Type {
 					//Save.exec(p, args);
 				}
 			}else if(Misc.isAnyIgnoreCase(args[1], "storable", "storabl", "storab", "stora", "stor", "sto", "st", "s", "-s")) {
-				if(Misc.isAnyIgnoreCase(args[2], "add", "ad", "a", "-a")) {
-					Add.exec(p, args);
-				}else if(Misc.isAnyIgnoreCase(args[2], "remove", "remov", "remo", "rem", "re", "r", "-rem", "-r")) {
-					//Remove.exec(p, args);
-				}
+				Storable.exec(p, args);
 			}
 		}
 	}
