@@ -41,6 +41,7 @@ Advanced: - On halt untill after basics done
 	    - UserAccount item storing
 	    - UserAccount item taking
 	    - UserAccount broken account errors
+	        - Broken account being missing type or such
 	
 	* Implement GiantBanksLocation
 	    - Add ability to have aformentioned use GSL
