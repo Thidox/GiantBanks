@@ -101,31 +101,40 @@ public class AccountType {
 		return this.maxPerSlot;
 	}
 	
-	public void setStorable(Boolean allow, ItemID item) {
+	public int setStorable(Boolean allow, ItemID item) {
 		if(item == null)
-			return;
+			return -1;
 		
-		this.setStorable(allow, iH.getItemNameByID(item.getId(), (null == item.getType() ? null : item.getType())));
+		return this.setStorable(allow, iH.getItemNameByID(item.getId(), (null == item.getType() ? null : item.getType())));
 	}
 	
-	public void setStorable(Boolean allow, String item) {
+	public int setStorable(Boolean allow, String item) {
 		if(item == null)
-			return;
+			return -1;
+		
+		item = item.toLowerCase();
 		
 		if(allow) {
 			if(this.allowed.contains(item))
-				return;
+				return -2;
+
+			if(this.disallowed.contains(item))
+				this.disallowed.remove(item);
 			
 			this.allowed.add(item);
 		}else{
 			if(this.disallowed.contains(item))
-				return;
+				return -2;
+
+			if(this.allowed.contains(item))
+				this.allowed.remove(item);
 			
 			this.disallowed.add(item);
 		}
 		
 		this.isUpdated = true;
 		GiantBanks.getPlugin().getSync().callUpdate(dbType.TYPES);
+		return 0;
 	}
 	
 	public int getMaxSlots() {
