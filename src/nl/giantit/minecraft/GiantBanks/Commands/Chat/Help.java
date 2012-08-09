@@ -155,7 +155,7 @@ public class Help {
 					}
 				}
 			}else{
-				Heraut.say(player, "&e[&3" + name + "&e]&c The requested player does not to be offline or even not existing! :(");
+				Heraut.say(player, "&e[&3" + name + "&e]&c The requested player does not seem to be online or even not existing! :(");
 			}
 		}else{
 			Help.showHelp(player, args);
