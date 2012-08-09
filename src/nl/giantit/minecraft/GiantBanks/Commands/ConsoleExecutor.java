@@ -21,7 +21,7 @@ public class ConsoleExecutor {
 			Type.exec(sender, args);
 		}else{
 			GiantBanks.getPlugin().getDB().getEngine().Truncate("#__accounts").updateQuery();
-			sender.sendMessage("fuck off u whore");
+			sender.sendMessage("fuck off");
 			//Heraut.say(sender, "Truncating items table!");
 			/*Heraut.say(player, "Ok, we have no friggin clue what you are on about, so what about we just send you our help page?");
 			help.showHelp(player, args);*/
