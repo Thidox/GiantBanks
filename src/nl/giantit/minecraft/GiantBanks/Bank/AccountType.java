@@ -85,6 +85,14 @@ public class AccountType {
 		return this.isUpdated;
 	}
 	
+	public String setName(String n) {
+		this.isUpdated = true;
+		this.name = n;
+		
+		GiantBanks.getPlugin().getSync().callUpdate(dbType.TYPES);
+		return this.name;
+	}
+	
 	public int setMaxSlots(int ms) {
 		this.isUpdated = true;
 		this.maxSlots = ms;
