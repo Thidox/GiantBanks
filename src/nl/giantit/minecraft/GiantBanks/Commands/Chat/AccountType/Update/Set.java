@@ -27,7 +27,7 @@ public class Set {
 				if(sH.contains(p.getName() + ".selectedType")) {
 					AccountType aT = (AccountType) sH.get(p.getName() + ".selectedType");
 					if(Misc.isAnyIgnoreCase(args[3], "name", "nam", "na", "n", "-n")) {
-						if(args[3] != null && !args[4].equals("")) {
+						if(args[4] != null && !args[4].equals("")) {
 							aT.setName(args[4]);
 							
 							HashMap<String, String> d = new HashMap<String, String>();
