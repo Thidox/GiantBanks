@@ -22,13 +22,13 @@ public class Set {
 	private static Register sH = Register.getInstance();
 
 	public static void exec(Player p, String[] args) {
-		if(args.length >= 4) {
+		if(args.length >= 5) {
 			if(pH.has(p, "giantbanks.admin.type.set")) {
 				if(sH.contains(p.getName() + ".selectedType")) {
 					AccountType aT = (AccountType) sH.get(p.getName() + ".selectedType");
-					if(Misc.isAnyIgnoreCase(args[2], "name", "nam", "na", "n", "-n")) {
-						if(args[3] != null && !args[3].equals("")) {
-							aT.setName(args[3]);
+					if(Misc.isAnyIgnoreCase(args[3], "name", "nam", "na", "n", "-n")) {
+						if(args[3] != null && !args[4].equals("")) {
+							aT.setName(args[4]);
 							
 							HashMap<String, String> d = new HashMap<String, String>();
 							d.put("id", String.valueOf(aT.getTypeID()));
@@ -41,14 +41,14 @@ public class Set {
 							
 							Heraut.say(p, mH.getMsg(msgType.ERROR, "syntaxError", d));
 						}
-					}else if(Misc.isAnyIgnoreCase(args[2], "maxslots", "maxs", "m", "ms", "-m", "-ms")) {
+					}else if(Misc.isAnyIgnoreCase(args[3], "maxslots", "maxs", "m", "ms", "-m", "-ms")) {
 						try{
-							aT.setMaxSlots(Integer.parseInt(args[3]));
+							aT.setMaxSlots(Integer.parseInt(args[4]));
 							
 							HashMap<String, String> d = new HashMap<String, String>();
 							d.put("id", String.valueOf(aT.getTypeID()));
 							d.put("type", aT.getName());
-							d.put("maxSlot", String.valueOf(aT.getMaxSlots()));
+							d.put("maxSlots", String.valueOf(aT.getMaxSlots()));
 							
 							Heraut.say(p, mH.getMsg(msgType.ADMIN, "typeMSChanged", d));
 						}catch(NumberFormatException e) {
@@ -57,9 +57,9 @@ public class Set {
 							
 							Heraut.say(p, mH.getMsg(msgType.ERROR, "syntaxError", d));
 						}
-					}else if(Misc.isAnyIgnoreCase(args[2], "maxperslot", "maxps", "mps", "mp", "-mps", "-mp")) {
+					}else if(Misc.isAnyIgnoreCase(args[3], "maxperslot", "maxps", "mps", "mp", "-mps", "-mp")) {
 						try{
-							aT.setMaxPerSlots(Integer.parseInt(args[3]));
+							aT.setMaxPerSlots(Integer.parseInt(args[4]));
 							
 							HashMap<String, String> d = new HashMap<String, String>();
 							d.put("id", String.valueOf(aT.getTypeID()));
