@@ -5,6 +5,9 @@ main:
     helpCommand: C_RED/%command C_YELLOW-C_WHITE %description
 admin:
     typeSelected: C_GREENSuccessfully selected the type! C_WHITE(%id%colon %type)
+    typeNameChanged: C_GREENSuccessfully changed name for type C_WHITE%id C_GREENinto C_WHITE%typeC_GREEN!
+    typeMSChanged: C_GREENSuccessfully changed max slots for type C_WHITE%id%colon %type  C_GREENinto C_WHITE%maxSlotsC_GREEN!
+    typeMPSChanged: C_GREENSuccessfully changed max per slot for type C_WHITE%id%colon %type  C_GREENinto C_WHITE%maxPerSlotC_GREEN!
     storableSet: C_GREENSuccessfully %allow C_WHITE%item C_GREENto be stored for type C_WHITE%typeC_GREEN!
 errors:
     itemIDInvalid: C_REDThe item id that you have entered is invalid!
