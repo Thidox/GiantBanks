@@ -89,7 +89,7 @@ public class AccountType {
 		this.isUpdated = true;
 		this.maxSlots = ms;
 
-		GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
+		GiantBanks.getPlugin().getSync().callUpdate(dbType.TYPES);
 		return this.maxSlots;
 	}
 	
@@ -97,7 +97,7 @@ public class AccountType {
 		this.isUpdated = true;
 		this.maxPerSlot = mps;
 		
-		GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
+		GiantBanks.getPlugin().getSync().callUpdate(dbType.TYPES);
 		return this.maxPerSlot;
 	}
 	
