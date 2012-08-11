@@ -10,6 +10,10 @@ public class Sync {
 	private GiantBanks plugin;
 	private int tID;
 	private config conf = config.Obtain();
+	private Boolean accSave = false;
+	private Boolean typeSave = false;
+	private Boolean bankSave = false;
+	private Boolean logSave = false;
 	
 	private Long getDelayTime() {
 		Long delay = 18000L;
@@ -94,40 +98,55 @@ public class Sync {
 		switch(t) {
 			case ACCOUNTS:
 				if(!conf.getBoolean("GiantBanks.cache.cache.accounts")) {
-					this.plugin.scheduleAsyncDelayedTask(new Runnable() {
-						@Override
-						public void run() {
-							dH.save(t);
-						}
-					}, 5L);
+					if(!this.accSave) {
+						this.accSave = true;
+						this.plugin.scheduleAsyncDelayedTask(new Runnable() {
+							@Override
+							public void run() {
+								dH.save(t);
+								accSave = false;
+							}
+						}, 5L);
+					}
 				}
 				break;
 			case TYPES:
 				if(!conf.getBoolean("GiantBanks.cache.cache.types"))
-					this.plugin.scheduleAsyncDelayedTask(new Runnable() {
-						@Override
-						public void run() {
-							dH.save(t);
-						}
-					}, 5L);
+					if(!this.typeSave) {
+						this.typeSave = true;
+						this.plugin.scheduleAsyncDelayedTask(new Runnable() {
+							@Override
+							public void run() {
+								dH.save(t);
+								typeSave = false;
+							}
+						}, 5L);
+					}
 				break;
 			case BANKS:
 				if(!conf.getBoolean("GiantBanks.cache.cache.banks"))
-					this.plugin.scheduleAsyncDelayedTask(new Runnable() {
-						@Override
-						public void run() {
-							dH.save(t);
-						}
-					}, 5L);
+					if(!this.bankSave) {
+						this.bankSave = true;
+						this.plugin.scheduleAsyncDelayedTask(new Runnable() {
+							@Override
+							public void run() {
+								dH.save(t);
+								bankSave = false;
+							}
+						}, 5L);
+					}
 				break;
 			case LOGS:
-				if(!conf.getBoolean("GiantBanks.cache.cache.logs"))
+				if(!this.logSave) {
+					this.logSave = true;
 					this.plugin.scheduleAsyncDelayedTask(new Runnable() {
 						@Override
 						public void run() {
 							dH.save(t);
+							logSave = false;
 						}
 					}, 5L);
+				}
 				break;
 		}
 	}
