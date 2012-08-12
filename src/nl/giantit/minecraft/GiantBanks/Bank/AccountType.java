@@ -191,48 +191,48 @@ public class AccountType {
 		return !disallowed.contains(item.toLowerCase());
 	}
 	
-	public static AccountType createAccountType(String p) {
-		return createAccountType(p, 20, 20);
+	public static AccountType createAccountType(String n) {
+		return createAccountType(n, 20, 20);
 	}
 	
-	public static AccountType createAccountType(String p, int maxSlot) {
-		return createAccountType(p, maxSlot, 20);
+	public static AccountType createAccountType(String n, int maxSlot) {
+		return createAccountType(n, maxSlot, 20);
 	}
 	
-	public static AccountType createAccountType(String p, int maxSlot, int maxPerSlot) {
-		return createAccountType(p, maxSlot, maxPerSlot, null);
+	public static AccountType createAccountType(String n, int maxSlot, int maxPerSlot) {
+		return createAccountType(n, maxSlot, maxPerSlot, null);
 	}
 	
-	public static AccountType createAccountType(String p, int maxSlot, int maxPerSlot, String item) {
+	public static AccountType createAccountType(String n, int maxSlot, int maxPerSlot, String item) {
 		int id = last.getTypeID() + 1;
 		
-		AccountType aT = createAccountType(id, p, maxSlot, maxPerSlot, item);
+		AccountType aT = createAccountType(id, n, maxSlot, maxPerSlot, item);
 		aT.setNew(true);
 		return aT;
 	}
 	
-	public static AccountType createAccountType(int id, String p) {
-		return createAccountType(id, p, 20, 20);
+	public static AccountType createAccountType(int id, String n) {
+		return createAccountType(id, n, 20, 20);
 	}
 	
-	public static AccountType createAccountType(int id, String p, int maxSlot) {
-		return createAccountType(id, p, maxSlot, 20);
+	public static AccountType createAccountType(int id, String n, int maxSlot) {
+		return createAccountType(id, n, maxSlot, 20);
 	}
 	
-	public static AccountType createAccountType(int id, String p, int maxSlot, int maxPerSlot) {
-		return createAccountType(id, p, maxSlot, maxPerSlot, null);
+	public static AccountType createAccountType(int id, String n, int maxSlot, int maxPerSlot) {
+		return createAccountType(id, n, maxSlot, maxPerSlot, null);
 	}
 	
-	public static AccountType createAccountType(int id, String p, int maxSlot, int maxPerSlot, String item) {
-		if(!types.containsKey(p)) {
-			AccountType AT = new AccountType(id, p, maxSlot, maxPerSlot, item);
-			types.put(p, AT);
-			typeByID.put(id, p);
+	public static AccountType createAccountType(int id, String n, int maxSlot, int maxPerSlot, String item) {
+		if(!types.containsKey(n)) {
+			AccountType AT = new AccountType(id, n, maxSlot, maxPerSlot, item);
+			types.put(n, AT);
+			typeByID.put(id, n);
 			last = AT;
 			return AT;
 		}
 		
-		return types.get(p);
+		return types.get(n);
 	}
 	
 	public static AccountType getType(int id) {
