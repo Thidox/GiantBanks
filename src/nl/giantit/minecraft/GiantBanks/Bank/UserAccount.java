@@ -353,6 +353,14 @@ public class UserAccount {
 		return total;
 	}
 	
+	public void eraseAll() {
+		//Very dangerous removes ALL items stored in this account!
+		this.slots = new ConcurrentHashMap<String, Collection<BankSlot>>();
+		
+		this.isUpdated = true;
+		GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
+	}
+	
 	public static UserAccount getUserAccount(String p) {
 		if(accounts.containsKey(p))
 			return accounts.get(p);
