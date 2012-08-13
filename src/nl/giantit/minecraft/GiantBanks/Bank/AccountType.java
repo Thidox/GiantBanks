@@ -208,6 +208,7 @@ public class AccountType {
 		
 		AccountType aT = createAccountType(id, n, maxSlot, maxPerSlot, item);
 		aT.setNew(true);
+		GiantBanks.getPlugin().getSync().callUpdate(dbType.TYPES);
 		return aT;
 	}
 	
