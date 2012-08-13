@@ -1,6 +1,7 @@
 package nl.giantit.minecraft.GiantBanks.Commands.Chat;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
+import nl.giantit.minecraft.GiantBanks.Commands.Chat.AccountType.Create;
 import nl.giantit.minecraft.GiantBanks.Commands.Chat.AccountType.Storable;
 import nl.giantit.minecraft.GiantBanks.Commands.Chat.AccountType.Update.Select;
 import nl.giantit.minecraft.GiantBanks.Commands.Chat.AccountType.Update.Set;
@@ -18,7 +19,7 @@ public class Type {
 	public static void exec(Player p, String[] args) {
 		if(args.length >= 3) {
 			if(Misc.isAnyIgnoreCase(args[1], "create", "creat", "crea", "cre", "cr", "c", "-c")) {
-				//Create.exec(p, args);
+				Create.exec(p, args);
 			}else if(Misc.isAnyIgnoreCase(args[1], "update", "updat", "upda", "upd", "up", "u", "-u")) {
 				if(Misc.isAnyIgnoreCase(args[2], "select", "selec", "sele", "sel", "se", "s", "-s")) {
 					Select.exec(p, args);
