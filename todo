@@ -9,8 +9,8 @@ Basics:
 	       - Needs to give to player still - done
 	       - Take all items from account - done
 	    - Checking items in account
-	    - Creating AccountTypes
-	    - Updating AccountTypes
+	    - Creating AccountTypes - done
+	    - Updating AccountTypes - done
 	    - Removing AccountTypes
 	        - Reset all using accounts to "Default"
 	            - Add ability to change reset type
