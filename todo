@@ -8,13 +8,13 @@ Basics:
 	    - Taking from account - done
 	       - Needs to give to player still - done
 	       - Take all items from account - done
-	    - Checking items in account
+	    - Checking items in account - done
 	    - Creating AccountTypes - done
 	    - Updating AccountTypes - done
 	    - Removing AccountTypes
 	        - Reset all using accounts to "Default"
 	            - Add ability to change reset type
-	    - Change AccountType for UserAccount
+	    - Change AccountType for UserAccount - partially done
 	        - Add ability to change AccountType for all UserAccounts with given type. 
 
 	* Create data parsers for UserAccount and AccountType
