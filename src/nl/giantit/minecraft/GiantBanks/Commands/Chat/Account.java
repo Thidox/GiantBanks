@@ -1,17 +1,11 @@
 package nl.giantit.minecraft.GiantBanks.Commands.Chat;
 
-import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.Commands.Chat.UserAccount.*;
-import nl.giantit.minecraft.GiantBanks.core.Items.Items;
-import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Misc;
 
 import org.bukkit.entity.Player;
 
 public class Account {
-
-	private static Items iH = GiantBanks.getPlugin().getItemHandler();
-	private static Messages mH = GiantBanks.getPlugin().getMsgHandler();
 	
 	public static void exec(Player p, String[] args) {
 		if(args.length >= 2) {
