@@ -8,6 +8,7 @@ import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -357,6 +358,21 @@ public class UserAccount {
 		this.isUpdated = true;
 		GiantBanks.getPlugin().getSync().callUpdate(dbType.ACCOUNTS);
 		return total;
+	}
+	
+	public HashMap<String, Integer> getItemList() {
+		HashMap<String, Integer> items = new HashMap<String, Integer>();
+		
+		for(Map.Entry<String, Collection<BankSlot>> slot : this.slots.entrySet()) {
+			int amount = 0;
+			for(BankSlot s : slot.getValue()) {
+				amount += s.getAmount();
+			}
+			
+			items.put(slot.getKey(), amount);
+		}
+		
+		return items;
 	}
 	
 	public void eraseAll() {
