@@ -2,13 +2,14 @@ package nl.giantit.minecraft.GiantBanks.Commands.Chat.UserAccount;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.Bank.UserAccount;
-import nl.giantit.minecraft.GiantBanks.core.Items.Items;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Heraut;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages.msgType;
+import nl.giantit.minecraft.GiantBanks.core.Misc.Misc;
 import nl.giantit.minecraft.GiantBanks.core.Tools.Register;
 import nl.giantit.minecraft.GiantBanks.core.perms.Permission;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -22,7 +23,13 @@ public class Select {
 	public static void exec(Player p, String[] args) {
 		if(args.length > 2) {
 			if(pH.has(p, "giantbanks.admin.account.select")) {
-				UserAccount uA = UserAccount.getUserAccount(args[2]);
+				OfflinePlayer op = Misc.getPlayer(args[2]);
+				UserAccount uA;
+				if(null != op) {
+					uA = UserAccount.getUserAccount(op.getName());
+				}else{
+					uA = UserAccount.getUserAccount(args[2]);
+				}
 				
 				if(null != uA) {
 					if(sH.contains(p.getName() + ".selectedAccount"))
