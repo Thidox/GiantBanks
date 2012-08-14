@@ -38,7 +38,7 @@ public class Help {
 		entries.add(new String[] {"bank account|a clear|c", "Erase all items in the selected user account", "giantbanks.admin.account.clear"});
 		
 		cEntries = new ArrayList<String[]>();
-		cEntries.add(new String[] {"bank", "Show GiantNanks help page 1"});
+		cEntries.add(new String[] {"bank", "Show GiantBanks help page 1"});
 		cEntries.add(new String[] {"bank help|? (page)", "Show GiantBanks help page x"});
 		cEntries.add(new String[] {"bank sendhelp|sh [receiver] (page)", "Send GiantBanks help page x to player y"});
 		cEntries.add(new String[] {"bank type|t create|c -n [name] (-ms [maxSlots]) (-mps [maxPerSlot])", "Create a new account type with the name x"});
@@ -90,7 +90,7 @@ public class Help {
 				params.put("command", helpEntry);
 				params.put("description", description);
 				
-				Heraut.say(sender, msg.getMsg(Messages.msgType.MAIN, "helpCommand", params));
+				Heraut.say(sender, msg.getConsoleMsg(Messages.msgType.MAIN, "helpCommand", params));
 			}
 		}
 	}
