@@ -6,7 +6,10 @@ main:
 admin:
     typeCreated: C_GREENSuccessfully created the type! (C_WHITE%idC_GREEN%colon C_WHITE%typeC_GREEN)
     typeSelected: C_GREENSuccessfully selected the type! C_WHITE(%id%colon %type)
+    accountSelected: C_GREENSuccessfully selected the account! C_WHITE(%id%colon %acc)
     typeNameChanged: C_GREENSuccessfully changed name for type C_WHITE%id C_GREENinto C_WHITE%typeC_GREEN!
+    typeChanged: C_GREENSuccessfully changed account type for account C_WHITE%id%colon %acc C_GREENinto C_WHITE%tid%colon %typeC_GREEN!
+    accCleared: C_GREENSuccessfully erased all items in account C_WHITE%id%colon %accC_GREEN!
     typeMSChanged: C_GREENSuccessfully changed max slots for type C_WHITE%id%colon %type  C_GREENinto C_WHITE%maxSlotsC_GREEN!
     typeMPSChanged: C_GREENSuccessfully changed max per slot for type C_WHITE%id%colon %type  C_GREENinto C_WHITE%maxPerSlotC_GREEN!
     storableSet: C_GREENSuccessfully %allow C_WHITE%item C_GREENto be stored for type C_WHITE%typeC_GREEN!
@@ -21,7 +24,9 @@ errors:
     notEnoughSpace: C_REDYou don't have enough space left in your bank account! C_WHITE%left %item C_REDdid not get stored!
     infFull: C_REDWe are sorry but your inventory is full! We will drop the remaining items for you!
     typeNotFound: C_REDWe are sorry, but we are unable to locate the type C_WHITE%typeC_RED!
+    accountNotFound: C_REDWe are sorry, but we are unable to locate the account C_WHITE%accC_RED!
     noTypeSelected: C_REDPlease select a Bank Account Type before you attempt modifying one!
+    noAccountSelected: C_REDPlease select a User Account before you attempt modifying one!
     typeNameNotPassed: C_REDPlease enter a valid name for the type!
     typeNameCollisions: C_REDA type already exists by the name C_WHITE%typeC_RED!
     storableFail: C_REDFailed to %allow C_WHITE%item C_REDto be stored for type C_WHITE%typeC_RED!
