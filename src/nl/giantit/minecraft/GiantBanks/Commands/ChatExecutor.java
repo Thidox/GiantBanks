@@ -24,6 +24,8 @@ public class ChatExecutor {
 			Have.exec(player, args);
 		}else if(Misc.isAnyIgnoreCase(args[0], "help", "hel", "he", "-he", "?")) {
 			Help.showHelp(player, args);
+		}else if(Misc.isAnyIgnoreCase(args[0], "sendhelp", "sh", "-sh")) {
+			Help.sendHelp(player, args);
 		}else if(Misc.isAnyIgnoreCase(args[0], "store", "stor", "sto", "st", "s", "-s")) {
 			Store.exec(player, args);
 		}else if(Misc.isAnyIgnoreCase(args[0], "get", "ge", "g", "-g")) {
