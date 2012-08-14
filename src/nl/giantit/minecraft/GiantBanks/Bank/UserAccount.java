@@ -106,6 +106,12 @@ public class UserAccount {
 		return this.rawData();
 	}
 	
+	public AccountType setType(AccountType aT) {
+		this.type = aT;
+		
+		return this.type;
+	}
+	
 	public AccountType getType() {
 		return this.type;
 	}
