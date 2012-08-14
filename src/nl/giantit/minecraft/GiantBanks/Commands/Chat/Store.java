@@ -195,8 +195,13 @@ public class Store {
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("command", "store");
 				
-				Heraut.say(p, mH.getMsg(msgType.ERROR, "syntaxError", d));
+				Heraut.say(p, mH.getMsg(msgType.ERROR, "noPermissions", d));
 			}
+		}else{
+			HashMap<String, String> d = new HashMap<String, String>();
+			d.put("command", "store");
+			
+			Heraut.say(p, mH.getMsg(msgType.ERROR, "syntaxError", d));
 		}
 	}
 }

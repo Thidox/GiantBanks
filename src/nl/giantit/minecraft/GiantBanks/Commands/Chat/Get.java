@@ -210,8 +210,13 @@ public class Get {
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("command", "get");
 				
-				Heraut.say(p, mH.getMsg(msgType.ERROR, "syntaxError", d));
+				Heraut.say(p, mH.getMsg(msgType.ERROR, "noPermissions", d));
 			}
+		}else{
+			HashMap<String, String> d = new HashMap<String, String>();
+			d.put("command", "get");
+			
+			Heraut.say(p, mH.getMsg(msgType.ERROR, "syntaxError", d));
 		}
 	}
 }

@@ -187,8 +187,13 @@ public class GetAll {
 				HashMap<String, String> d = new HashMap<String, String>();
 				d.put("command", "getall");
 				
-				Heraut.say(p, mH.getMsg(msgType.ERROR, "syntaxError", d));
+				Heraut.say(p, mH.getMsg(msgType.ERROR, "noPermissions", d));
 			}
+		}else{
+			HashMap<String, String> d = new HashMap<String, String>();
+			d.put("command", "getall");
+			
+			Heraut.say(p, mH.getMsg(msgType.ERROR, "syntaxError", d));
 		}
 	}
 
