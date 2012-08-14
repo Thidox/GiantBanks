@@ -149,14 +149,14 @@ public class Get {
 								
 								HashMap<String, String> data = new HashMap<String, String>();
 								data.put("amount", String.valueOf(amount));
-								data.put("item", item);
+								data.put("item", iID.getName());
 								Heraut.say(p, mH.getMsg(msgType.MAIN, "itemObtained", data));
 								//Give user his [amount] of item [item]
 								return;
 							}else{
 								HashMap<String, String> data = new HashMap<String, String>();
 								data.put("amount", String.valueOf(amount - status));
-								data.put("item", item);
+								data.put("item", iID.getName());
 								
 								switch(status) {
 									case -2:
@@ -189,7 +189,8 @@ public class Get {
 						}else{
 							HashMap<String, String> data = new HashMap<String, String>();
 							data.put("amount", String.valueOf(h));
-							data.put("item", item);
+							data.put("item", iID.getName());
+							
 							if(h > 0) {
 								Heraut.say(p, mH.getMsg(msgType.ERROR, "notEnoughItems", data));
 							}else{

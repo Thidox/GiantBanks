@@ -148,14 +148,14 @@ public class Store {
 								InventoryHandler.removeItem(inv, iStack);
 								HashMap<String, String> data = new HashMap<String, String>();
 								data.put("amount", String.valueOf(amount));
-								data.put("item", item);
+								data.put("item", iID.getName());
 								Heraut.say(p, mH.getMsg(msgType.MAIN, "itemStored", data));
 								return;
 							}else{
 								HashMap<String, String> data = new HashMap<String, String>();
 								data.put("left", String.valueOf(status));
 								data.put("amount", String.valueOf(amount - status));
-								data.put("item", item);
+								data.put("item", iID.getName());
 								
 								switch(status) {
 									case -3:
@@ -179,7 +179,7 @@ public class Store {
 						}else{
 							HashMap<String, String> data = new HashMap<String, String>();
 							data.put("amount", String.valueOf(has));
-							data.put("item", item);
+							data.put("item", iID.getName());
 							
 							Heraut.say(p, mH.getMsg(msgType.ERROR, "notEnoughItems", data));
 						}
