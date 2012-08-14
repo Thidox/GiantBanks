@@ -52,6 +52,9 @@ public class AccountType {
 					i = i.replaceFirst("\\+", "");
 					allowed.add(i.toLowerCase());
 				}else{
+					if(i.equals(""))
+						continue;
+					
 					i = i.replace("^-", "");
 					disallowed.add(i.toLowerCase());
 				}
@@ -157,12 +160,18 @@ public class AccountType {
 		String s = "";
 		if(this.allowed.size() > 0) {
 			for(String al : this.allowed) {
+				if(al.equals(""))
+					continue;
+				
 				s += "+" + al + ";";
 			}
 		}
 		
 		if(this.disallowed.size() > 0) {
 			for(String dl : this.disallowed) {
+				if(dl.equals(""))
+					continue;
+				
 				s += "-" + dl + ";";
 			}
 		}
