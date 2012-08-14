@@ -4,7 +4,7 @@ main:
     itemObtained: C_GREENSuccessfully obtained C_WHITE%amount C_GREENof C_WHITE%itemC_GREEN!
     accHolds: C_GREENYour bank account holds the following items%colon
     page: C_GREENShowing page C_WHITE%pageC_GREEN/C_WHITE%maxPages
-    accHoldItem: C_WHITE%itemC_GREEN%colon C_WHITE%amt
+    accHoldItem: C_WHITE%amt C_GREENof C_WHITE%item
     helpCommand: C_RED/%command C_YELLOW-C_WHITE %description
 admin:
     typeCreated: C_GREENSuccessfully created the type! (C_WHITE%idC_GREEN%colon C_WHITE%typeC_GREEN)
@@ -16,6 +16,7 @@ admin:
     typeMSChanged: C_GREENSuccessfully changed max slots for type C_WHITE%id%colon %type  C_GREENinto C_WHITE%maxSlotsC_GREEN!
     typeMPSChanged: C_GREENSuccessfully changed max per slot for type C_WHITE%id%colon %type  C_GREENinto C_WHITE%maxPerSlotC_GREEN!
     storableSet: C_GREENSuccessfully %allow C_WHITE%item C_GREENto be stored for type C_WHITE%typeC_GREEN!
+    accHolds: C_GREENBank account for C_WHITE%aID%colon %acc C_GREENholds the following items%colon
 errors:
     itemIDInvalid: C_REDThe item id that you have entered is invalid!
     itemInvalid: C_REDThe item you requested does not seem to exist...
@@ -34,6 +35,7 @@ errors:
     typeNameCollisions: C_REDA type already exists by the name C_WHITE%typeC_RED!
     storableFail: C_REDFailed to %allow C_WHITE%item C_REDto be stored for type C_WHITE%typeC_RED!
     noStoredItems: C_REDYou do not have any items stored yet!
+    pageExceedsMax: C_REDWe are sorry but there are only C_WHITE%maxPages C_REDpages!
     noPermissions: C_REDWe are sorry but you do not have access to that command (C_YELLOW%commandC_RED)!
     syntaxError: C_REDPlease use the appropriate syntax for the C_YELLOW%command C_REDcommand!
     unkown: C_REDWe are sorry but an unknown error occured!
