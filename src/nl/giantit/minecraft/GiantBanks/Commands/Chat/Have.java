@@ -22,6 +22,9 @@ public class Have {
 	public static void exec(Player p, String[] args) {
 		if(pH.has(p, "giantbanks.bank.have")) {
 			UserAccount uA = UserAccount.getUserAccount(p.getName());
+			if(null == uA)
+				uA = UserAccount.createUserAccount(p.getName());
+			
 			HashMap<String, Integer> slots = uA.getItemList();
 			
 			if(slots.size() > 0) {
