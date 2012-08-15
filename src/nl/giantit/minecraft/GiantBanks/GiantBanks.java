@@ -103,6 +103,7 @@ public class GiantBanks extends JavaPlugin {
 			//econHandler = new Eco(this);
 			msgHandler = new Messages(this);
 			
+			getServer().getPluginManager().registerEvents(new nl.giantit.minecraft.GiantBanks.Listeners.PlayerListener(this), this);
 			//getServer().getPluginManager().registerEvents(new ServerListener(this), this);
 			
 		}catch(Exception e) {
@@ -161,6 +162,13 @@ public class GiantBanks extends JavaPlugin {
 	
 	public Updater getUpdater() {
 		return this.updHandler;
+	}
+	public Boolean isOutOfDate() {
+		return this.updHandler.isOutOfDate();
+	}
+	
+	public String getNewVersion() {
+		return this.updHandler.getNewVersion();
 	}
 	
 	public Database getDB() {
