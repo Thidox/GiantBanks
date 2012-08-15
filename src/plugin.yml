@@ -1,6 +1,6 @@
 name: GiantBanks
 main: nl.giantit.minecraft.GiantBanks.GiantBanks
-version: 0.1.DEV
+version: 0.1.BETA
 commands:
     bank:
         description: Your private banker!
