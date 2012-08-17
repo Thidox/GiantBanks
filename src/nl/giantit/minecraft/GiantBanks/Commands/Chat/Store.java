@@ -4,6 +4,8 @@ import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.Bank.UserAccount;
 import nl.giantit.minecraft.GiantBanks.core.Items.ItemID;
 import nl.giantit.minecraft.GiantBanks.core.Items.Items;
+import nl.giantit.minecraft.GiantBanks.core.Logger.Logger;
+import nl.giantit.minecraft.GiantBanks.core.Logger.LoggerType;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Heraut;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages.msgType;
@@ -150,6 +152,12 @@ public class Store {
 								data.put("amount", String.valueOf(amount));
 								data.put("item", iID.getName());
 								Heraut.say(p, mH.getMsg(msgType.MAIN, "itemStored", data));
+								
+								Logger.Log(LoggerType.UAIS, p.getName(),
+											"{id=" + String.valueOf(uA.getAccountID()) + ";" +
+											"owner=" + uA.getOwner() + ";" +
+											"item=" + iID.getName() + ";" +
+											"amount=" + String.valueOf(amount) + ";}");
 								return;
 							}else{
 								HashMap<String, String> data = new HashMap<String, String>();
@@ -172,6 +180,12 @@ public class Store {
 										InventoryHandler.removeItem(inv, iStack);
 										Heraut.say(p, mH.getMsg(msgType.ERROR, "notEnoughSpace", data));
 										Heraut.say(p, mH.getMsg(msgType.MAIN, "itemStored", data));
+										
+										Logger.Log(LoggerType.UAIS, p.getName(),
+													"{id=" + String.valueOf(uA.getAccountID()) + ";" +
+													"owner=" + uA.getOwner() + ";" +
+													"item=" + iID.getName() + ";" +
+													"amount=" + String.valueOf(amount - status) + ";}");
 										//Give user his [status] of item [item]
 										break;
 								}

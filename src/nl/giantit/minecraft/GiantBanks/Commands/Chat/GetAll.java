@@ -4,6 +4,8 @@ import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.Bank.UserAccount;
 import nl.giantit.minecraft.GiantBanks.core.Items.ItemID;
 import nl.giantit.minecraft.GiantBanks.core.Items.Items;
+import nl.giantit.minecraft.GiantBanks.core.Logger.Logger;
+import nl.giantit.minecraft.GiantBanks.core.Logger.LoggerType;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Heraut;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages.msgType;
@@ -131,6 +133,13 @@ public class GetAll {
 							data.put("amount", String.valueOf(status));
 							data.put("item", item);
 							Heraut.say(p, mH.getMsg(msgType.MAIN, "itemObtained", data));
+							
+
+							Logger.Log(LoggerType.UAIT, p.getName(),
+										"{id=" + String.valueOf(uA.getAccountID()) + ";" +
+										"owner=" + uA.getOwner() + ";" +
+										"item=" + iID.getName() + ";" +
+										"amount=" + String.valueOf(status) + ";}");
 							//Give user his [amount] of item [item]
 							return;
 						}else{
@@ -162,6 +171,12 @@ public class GetAll {
 									
 									InventoryHandler.storeItem(p, inv, iStack);
 									Heraut.say(p, mH.getMsg(msgType.ERROR, "itemObtained", data));
+
+									Logger.Log(LoggerType.UAIT, p.getName(),
+												"{id=" + String.valueOf(uA.getAccountID()) + ";" +
+												"owner=" + uA.getOwner() + ";" +
+												"item=" + iID.getName() + ";" +
+												"amount=" + String.valueOf(status) + ";}");
 									//Give user his [status] of item [item]
 									break;
 							}

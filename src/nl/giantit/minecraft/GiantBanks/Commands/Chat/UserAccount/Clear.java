@@ -2,6 +2,8 @@ package nl.giantit.minecraft.GiantBanks.Commands.Chat.UserAccount;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.Bank.UserAccount;
+import nl.giantit.minecraft.GiantBanks.core.Logger.Logger;
+import nl.giantit.minecraft.GiantBanks.core.Logger.LoggerType;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Heraut;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages.msgType;
@@ -22,6 +24,13 @@ public class Clear {
 		if(pH.has(p, "giantbanks.admin.account.clear")) {
 			if(sH.contains(p.getName() + ".selectedAccount")) {
 				UserAccount uA = (UserAccount) sH.get(p.getName() + ".selectedAccount");
+
+				Logger.Log(LoggerType.UAM, p.getName(),
+							"{id=" + String.valueOf(uA.getAccountID()) + ";" +
+							"owner=" + uA.getOwner() + ";" +
+							"data=" + uA.getRawData() + ";" +
+							"action=clear;}");
+				
 				uA.eraseAll();
 				
 				HashMap<String, String> d = new HashMap<String, String>();
