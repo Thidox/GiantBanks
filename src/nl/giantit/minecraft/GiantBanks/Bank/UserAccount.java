@@ -2,14 +2,16 @@ package nl.giantit.minecraft.GiantBanks.Bank;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.core.Items.ItemID;
+import nl.giantit.minecraft.GiantBanks.core.Logger.Logger;
+import nl.giantit.minecraft.GiantBanks.core.Logger.LoggerType;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbType;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserAccount {
@@ -86,6 +88,16 @@ public class UserAccount {
 		this.owner = p;
 		this.rawData = data;
 		this.type = type;
+		
+		if(null != this.rawData)
+			this.parseData();
+	}
+	
+	public void reset(String data) {
+		this.slots = new ConcurrentHashMap<String, Collection<BankSlot>>();
+		this.usedSlots = 0;
+		
+		this.rawData = data;
 		
 		if(null != this.rawData)
 			this.parseData();
@@ -398,6 +410,13 @@ public class UserAccount {
 		if(!accounts.containsKey(p)) {
 			UserAccount UA = new UserAccount(p, data);				
 			accounts.put(p, UA);
+			
+			Logger.Log(LoggerType.UAC, p,
+						"{id=" + String.valueOf(UA.getAccountID()) + ";" +
+						"owner=" + UA.getOwner() + ";" +
+						"aT=" + String.valueOf(UA.getType().getTypeID()) + ";" +
+						"aTn=" + UA.getType().getName() + ";" +
+						"data=" + UA.getRawData() + ";}");
 			return UA;
 		}
 		
@@ -416,6 +435,16 @@ public class UserAccount {
 	
 	public static UserAccount createUserAccount(int id, String p, String data, AccountType type) {
 		if(!accounts.containsKey(p)) {
+			UserAccount UA = new UserAccount(id, p, data, type);
+			accounts.put(p, UA);
+			return UA;
+		}
+		
+		return accounts.get(p);
+	}
+	
+	public static UserAccount createUserAccount(int id, String p, String data, AccountType type, Boolean overwrite) {
+		if(!accounts.containsKey(p) || overwrite) {
 			UserAccount UA = new UserAccount(id, p, data, type);
 			accounts.put(p, UA);
 			return UA;
