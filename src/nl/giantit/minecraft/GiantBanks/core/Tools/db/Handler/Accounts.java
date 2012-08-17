@@ -142,4 +142,19 @@ public class Accounts implements IHandler {
 			}
 		}
 	}
+	
+	public void load(String p) {
+		iDriver db = Database.Obtain().getEngine();
+		HashMap<String, String> where = new HashMap<String, String>();
+		where.put("player", p);
+		ArrayList<HashMap<String, String>> resSet = db.select("data").where(where).from("#__accounts").execQuery();
+		
+		if(resSet.size() > 0) {
+			HashMap<String, String> res = resSet.get(0);
+			
+			UserAccount.getUserAccount(p).reset(res.get("data"));
+		}else{
+			//UserAccount.remove(p);
+		}
+	}
 }
