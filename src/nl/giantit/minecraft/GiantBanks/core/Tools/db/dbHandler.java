@@ -93,4 +93,26 @@ public class dbHandler {
 				break;
 		}
 	}
+	
+	public IHandler getHandler(dbType type) {
+		if(type == null)
+			return null;
+		
+		switch(type) {
+			case ACCOUNTS:
+				return handlers.get("Accounts");
+			case TYPES:
+				return handlers.get("Types");
+			case BANKS:
+				//init banks
+				break;
+			case LOGS:
+				//init logs
+				break;
+			default:
+				return null;
+		}
+		
+		return null;
+	}
 }
