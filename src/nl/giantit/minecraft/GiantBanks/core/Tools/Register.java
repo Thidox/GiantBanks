@@ -24,6 +24,14 @@ public class Register {
 		return true;
 	}
 	
+	public Boolean store(String K, Object V, Boolean override) {
+		if(this.stored.containsKey(K) && !override)
+			return false;
+		
+		this.stored.put(K, V);
+		return true;
+	}
+	
 	public Object get(String K) {
 		if(!this.stored.containsKey(K))
 			return null;
