@@ -1,6 +1,6 @@
 GiantBanks:
     global:
-        version: 0.1
+        version: 0.2
         name: GiantBanks
         debug: false
         perPage: 5
@@ -10,9 +10,17 @@ GiantBanks:
     log:
         useLogging: true
         log:
-            store: true
-            get: true
-            gift: true
+            accounttype:
+                creation: true
+                modification: true
+                removal: true
+            useraccount:
+                creation: true
+                modification: true
+                removal: true
+                item:
+                    storing: true
+                    taking: true
             unknown: true
     permissions:
         usePermissions: true
@@ -32,7 +40,6 @@ GiantBanks:
         useCache: true
         updateDelay: '00:15:00'
         cache:
-            log: false
             banks: true
             accounts: true
             types: true
