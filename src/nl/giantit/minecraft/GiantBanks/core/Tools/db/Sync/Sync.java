@@ -2,6 +2,7 @@ package nl.giantit.minecraft.GiantBanks.core.Tools.db.Sync;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.core.config;
+import nl.giantit.minecraft.GiantBanks.core.Tools.Register;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbHandler;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbType;
 
@@ -14,6 +15,7 @@ public class Sync {
 	private Boolean typeSave = false;
 	private Boolean bankSave = false;
 	private Boolean logSave = false;
+	private Register sH = Register.getInstance();
 	
 	private Long getDelayTime() {
 		Long delay = 18000L;
@@ -56,6 +58,8 @@ public class Sync {
 					public void run() {
 						dbHandler dH = plugin.getDbHandler();
 						dH.save(null);
+						
+						sH.remove("loggedOffPlayers");
 					}
 				}, delay, delay);
 	}
@@ -105,6 +109,8 @@ public class Sync {
 							public void run() {
 								dH.save(t);
 								accSave = false;
+								
+								sH.remove("loggedOffPlayers");
 							}
 						}, 5L);
 					}
