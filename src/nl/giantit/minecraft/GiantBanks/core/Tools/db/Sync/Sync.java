@@ -162,6 +162,6 @@ public class Sync {
 			plugin.getServer().getScheduler().cancelTask(tID);
 		}
 		
-		this.fullSave();
+		this.saveNow();
 	}
 }
