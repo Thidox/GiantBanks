@@ -147,7 +147,7 @@ public class Accounts implements IHandler {
 		iDriver db = Database.Obtain().getEngine();
 		HashMap<String, String> where = new HashMap<String, String>();
 		where.put("player", p);
-		ArrayList<HashMap<String, String>> resSet = db.select("data").where(where).from("#__accounts").execQuery();
+		ArrayList<HashMap<String, String>> resSet = db.select("data").from("#__accounts").where(where).execQuery();
 		
 		if(resSet.size() > 0) {
 			HashMap<String, String> res = resSet.get(0);
