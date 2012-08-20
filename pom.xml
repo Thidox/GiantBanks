@@ -32,15 +32,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>me.ic3d.eco</groupId>
-			<artifactId>ECO</artifactId>
-			<version>unknown</version>
-			<type>jar</type>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/3co.jar</systemPath>
-		</dependency>
-		
-		<dependency>
 			<groupId>org.neocraft.AEco</groupId>
 			<artifactId>AEco</artifactId>
 			<version>2.1</version>
