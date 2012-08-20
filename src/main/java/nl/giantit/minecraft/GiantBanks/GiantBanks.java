@@ -83,7 +83,10 @@ public class GiantBanks extends JavaPlugin {
 			conf.loadConfig(configFile);
 			pubName = conf.getString(this.name + ".global.name");
 			
-			this.db = Database.Obtain(null, (HashMap<String, String>) conf.getMap(this.name + ".db"));
+			HashMap<String, String> db = (HashMap<String, String>) conf.getMap(this.name + ".db");
+			db.put("debug", conf.getString(this.name + ".global.debug"));
+			
+			this.db = Database.Obtain(this, null, db);
 			this.updHandler = new Updater(this);
 			itemHandler = new Items(this);
 			
@@ -177,6 +180,10 @@ public class GiantBanks extends JavaPlugin {
 	
 	public Permission getPermHandler() {
 		return this.permHandler.getEngine();
+	}
+	
+	public PermHandler getPermHandler(Boolean obj) {
+		return this.permHandler;
 	}
 	
 	public dbHandler getDbHandler() {

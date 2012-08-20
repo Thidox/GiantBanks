@@ -1,7 +1,8 @@
 package nl.giantit.minecraft.GiantBanks.core.Database.drivers;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.config;
+
+import org.bukkit.plugin.Plugin;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -22,7 +23,7 @@ import java.util.logging.Level;
 public class MySQL implements iDriver {
 	
 	private static HashMap<String, MySQL> instance = new HashMap<String, MySQL>();
-	private GiantBanks plugin;
+	private Plugin plugin;
 	
 	private ArrayList<HashMap<String, String>> sql = new ArrayList<HashMap<String, String>>();
 	private ArrayList<ResultSet> query = new ArrayList<ResultSet>();
@@ -30,7 +31,14 @@ public class MySQL implements iDriver {
 	
 	private String cur, db, host, port, user, pass, prefix;
 	private Connection con = null;
-	private config conf = null;
+	private Boolean dbg = false;
+	
+	private Boolean parseBool(String s, Boolean d) {
+		if(s.equalsIgnoreCase("1") || s.equalsIgnoreCase("y") || s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("true"))
+			return true;
+		
+		return d;
+	}
 	
 	private void connect() {
 		String dbPath = "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.db + "?user=" + this.user + "&password=" + this.pass;
@@ -38,22 +46,22 @@ public class MySQL implements iDriver {
 			Class.forName("com.mysql.jdbc.Driver");
 			this.con = DriverManager.getConnection(dbPath);
 		}catch(SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + this.plugin.getName() + "] Failed to connect to database: SQL error!");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, "Failed to connect to database: SQL error!");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		}catch(ClassNotFoundException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + this.plugin.getName() + "] Failed to connect to database: MySQL library not found!");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, "Failed to connect to database: MySQL library not found!");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
 	
-	private MySQL(HashMap<String, String> c) {
-		this.plugin = GiantBanks.getPlugin();
-		
-		this.conf = config.Obtain();
+	private MySQL(Plugin p, HashMap<String, String> c) {
+		this.plugin = p;
 		
 		this.db = c.get("database");
 		this.host = c.get("host");
@@ -61,6 +69,7 @@ public class MySQL implements iDriver {
 		this.user = c.get("user");
 		this.pass = c.get("password");
 		this.prefix = c.get("prefix");
+		this.dbg = (c.containsKey("debug")) ? this.parseBool(c.get("debug"), false) : false;
 		this.connect();
 	}
 	
@@ -86,15 +95,17 @@ public class MySQL implements iDriver {
 
 			return res.next();
 		}catch (NullPointerException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "]: Could not load table " + table);
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, "Could not load table " + table);
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
             return false;
 		}catch (SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "]: Could not load table " + table);
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, "Could not load table " + table);
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
             return false;
 		} finally {
@@ -103,9 +114,10 @@ public class MySQL implements iDriver {
 					res.close();
 				}
 			}catch (Exception e) {
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "]: Could not close result connection to database");
-				if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-					GiantBanks.log.log(Level.INFO, e.getMessage());
+				plugin.getLogger().log(Level.SEVERE, "Could not close result connection to database");
+				if(this.dbg) {
+					plugin.getLogger().log(Level.INFO, e.getMessage());
+					e.printStackTrace();
 				}
 				return false;
 			}
@@ -148,7 +160,7 @@ public class MySQL implements iDriver {
 			sql.add(ad);
 			
 			if(debug == true)
-				GiantBanks.log.log(Level.INFO, "[" + plugin.getName() + "] " + sql.get(last).get("sql"));
+				plugin.getLogger().log(Level.INFO, sql.get(last).get("sql"));
 		}else{
 			last = sql.size() - 1;
 			try {
@@ -156,7 +168,7 @@ public class MySQL implements iDriver {
 				if(SQL.containsKey("sql")) {
 					if(SQL.containsKey("finalize")) {
 						if(true == debug)
-							GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] SQL syntax is finalized!");
+							plugin.getLogger().log(Level.SEVERE, "SQL syntax is finalized!");
 						return;
 					}else{
 						SQL.put("sql", SQL.get("sql") + string);
@@ -168,13 +180,13 @@ public class MySQL implements iDriver {
 					}
 				}else
 					if(true == debug)
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + last + " is not a valid SQL query!");
+						plugin.getLogger().log(Level.SEVERE, last + " is not a valid SQL query!");
 				
 				if(debug == true)
-					GiantBanks.log.log(Level.INFO, "[" + plugin.getName() + "] " + sql.get(last).get("sql"));
+					plugin.getLogger().log(Level.INFO, sql.get(last).get("sql"));
 			}catch(NullPointerException e) {
 				if(true == debug)
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + last + " is not a valid SQL query!");
+					plugin.getLogger().log(Level.SEVERE, "Query " + last + " could not be found!");
 			}
 		}
 			
@@ -203,7 +215,7 @@ public class MySQL implements iDriver {
 			if(SQL.containsKey("sql")) {
 				if(SQL.containsKey("finalize")) {
 					if(true == debug)
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] SQL syntax is finalized!");
+						plugin.getLogger().log(Level.SEVERE, "SQL syntax is finalized!");
 					return;
 				}else{
 					SQL.put("sql", SQL.get("sql") + string);
@@ -215,13 +227,13 @@ public class MySQL implements iDriver {
 				}
 			}else
 				if(true == debug)
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + add.toString() + " is not a valid SQL query!");
+					plugin.getLogger().log(Level.SEVERE, add.toString() + " is not a valid SQL query!");
 		
 			if(debug == true)
-				GiantBanks.log.log(Level.INFO, "[" + plugin.getName() + "] " + sql.get(last).get("sql"));
+				plugin.getLogger().log(Level.INFO, sql.get(last).get("sql"));
 		}catch(NullPointerException e) {
 			if(true == debug)
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + add.toString() + " is not a valid SQL query!");
+				plugin.getLogger().log(Level.SEVERE, "Query " + last + " could not be found!");
 		}
 		
 		return;
@@ -230,51 +242,6 @@ public class MySQL implements iDriver {
 	@Override
 	public ArrayList<HashMap<String, String>> execQuery() {
 		Integer queryID = ((sql.size() - 1 > 0) ? (sql.size() - 1) : 0);
-		/*Statement st = null;
-		
-		ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
-		try {
-			HashMap<String, String> SQL = sql.get(queryID);
-			if(SQL.containsKey("sql")) {
-				try {
-					st = con.createStatement();
-					//query.add(queryID, st.executeQuery(SQL.get("sql")));
-					ResultSet res = st.executeQuery(SQL.get("sql"));
-					while(res.next()) {
-						HashMap<String, String> row = new HashMap<String, String>();
-
-						ResultSetMetaData rsmd = res.getMetaData();
-						int columns = rsmd.getColumnCount();
-						for(int i = 1; i < columns + 1; i++) {
-							row.put(rsmd.getColumnName(i), res.getString(i));
-						}
-						data.add(row);
-					}
-				}catch (SQLException e) {
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not execute query!");
-					if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-						GiantBanks.log.log(Level.INFO, e.getMessage());
-					}
-				} finally {
-					try {
-						if(st != null) {
-							st.close();
-						}
-					}catch (Exception e) {
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-						if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-							GiantBanks.log.log(Level.INFO, e.getMessage());
-						}
-					}
-				}
-			}
-		}catch(NullPointerException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + queryID.toString() + " is not a valid SQL query!");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
-			}
-		}*/
-		
 		return this.execQuery(queryID);
 	}
 	
@@ -304,9 +271,10 @@ public class MySQL implements iDriver {
 						data.add(row);
 					}
 				}catch (SQLException e) {
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not execute query!");
-					if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-						GiantBanks.log.log(Level.INFO, e.getMessage());
+					plugin.getLogger().log(Level.SEVERE, "Could not execute query!");
+					if(this.dbg) {
+						plugin.getLogger().log(Level.INFO, e.getMessage());
+						e.printStackTrace();
 					}
 				} finally {
 					try {
@@ -314,15 +282,16 @@ public class MySQL implements iDriver {
 							st.close();
 						}
 					}catch (Exception e) {
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-						if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-							GiantBanks.log.log(Level.INFO, e.getMessage());
+						plugin.getLogger().log(Level.SEVERE, "Could not close database connection");
+						if(this.dbg) {
+							plugin.getLogger().log(Level.INFO, e.getMessage());
+							e.printStackTrace();
 						}
 					}
 				}
 			}
 		}catch(NullPointerException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + queryID.toString() + " is not a valid SQL query!");
+			plugin.getLogger().log(Level.SEVERE, "Query " + queryID.toString() + " could not be found!");
 		}
 		
 		return data;
@@ -331,35 +300,6 @@ public class MySQL implements iDriver {
 	@Override
 	public void updateQuery() {
 		Integer queryID = ((sql.size() - 1 > 0) ? (sql.size() - 1) : 0);
-		/*Statement st = null;
-		
-		try {
-			HashMap<String, String> SQL = sql.get(queryID);
-			if(SQL.containsKey("sql")) {
-				try {
-					st = con.createStatement();
-					st.executeUpdate(SQL.get("sql"));
-				}catch (SQLException e) {
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not execute query!");
-					if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-						GiantBanks.log.log(Level.INFO, e.getMessage());
-					}
-				} finally {
-					try {
-						if(st != null) {
-							st.close();
-						}
-					}catch (Exception e) {
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-						if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-							GiantBanks.log.log(Level.INFO, e.getMessage());
-						}
-					}
-				}
-			}
-		}catch(NullPointerException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + queryID.toString() + " is not a valid SQL query!");
-		}*/
 		this.updateQuery(queryID);
 	}
 	
@@ -371,12 +311,16 @@ public class MySQL implements iDriver {
 			HashMap<String, String> SQL = sql.get(queryID);
 			if(SQL.containsKey("sql")) {
 				try {
+					if(con.isClosed() || !con.isValid(0))
+						this.connect();
+					
 					st = con.createStatement();
 					st.executeUpdate(SQL.get("sql"));
 				}catch (SQLException e) {
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not execute query!");
-					if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-						GiantBanks.log.log(Level.INFO, e.getMessage());
+					plugin.getLogger().log(Level.SEVERE, "Could not execute query!");
+					if(this.dbg) {
+						plugin.getLogger().log(Level.INFO, e.getMessage());
+						e.printStackTrace();
 					}
 				} finally {
 					try {
@@ -384,15 +328,16 @@ public class MySQL implements iDriver {
 							st.close();
 						}
 					}catch (Exception e) {
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-						if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-							GiantBanks.log.log(Level.INFO, e.getMessage());
+						plugin.getLogger().log(Level.SEVERE, "Could not close database connection");
+						if(this.dbg) {
+							plugin.getLogger().log(Level.INFO, e.getMessage());
+							e.printStackTrace();
 						}
 					}
 				}
 			}
 		}catch(NullPointerException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + queryID.toString() + " is not a valid SQL query!");
+			plugin.getLogger().log(Level.SEVERE, queryID.toString() + " is not a valid SQL query!");
 		}
 	}
 	
@@ -400,22 +345,6 @@ public class MySQL implements iDriver {
 	public int countResult() {
 		Integer queryID = ((query.size() - 1 > 0) ? (query.size() - 1) : 0);
 		
-		/*if(query.get(queryID) == null)
-			return 0;
-		try {
-			query.get(queryID).last();
-			int row = query.get(queryID).getRow();
-			query.get(queryID).first();
-		
-			return row;
-		}catch (Exception e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not count rows for query (" + queryID.toString() + ")!");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
-			}
-		}
-		
-		return 0;*/
 		return this.countResult(queryID);
 	}
 	
@@ -430,9 +359,10 @@ public class MySQL implements iDriver {
 		
 			return row;
 		}catch (Exception e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not count rows for query (" + queryID.toString() + ")!");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, "Could not count rows for query (" + queryID.toString() + ")!");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		}
 		
@@ -444,39 +374,6 @@ public class MySQL implements iDriver {
 		Integer queryID = ((query.size() - 1 > 0) ? (query.size() - 1) : 0);
 		
 		return this.getResult(queryID);
-		
-		/*ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
-		try {
-			ResultSet res = query.get(queryID);
-			while(res.next()) {
-				HashMap<String, String> row = new HashMap<String, String>();
-				
-				ResultSetMetaData rsmd = res.getMetaData();
-				int columns = rsmd.getColumnCount();
-				for(int i = 0; i < columns; i++) {
-					row.put(rsmd.getColumnName(i), res.getString(i));
-				}
-				data.add(row);
-			}
-		}catch (SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not grab item data");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
-			}
-		} finally {
-			try {
-				if(query.get(queryID) != null) {
-					query.get(queryID).close();
-				}
-			}catch (Exception e) {
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-				if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-					GiantBanks.log.log(Level.INFO, e.getMessage());
-				}
-			}
-		}
-		
-		return data;*/
 	}
 	
 	@Override
@@ -486,9 +383,10 @@ public class MySQL implements iDriver {
 			ResultSet res = query.get(queryID);
 			res.getRow();
 		}catch (SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not grab item data");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, "Could not grab item data");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		} finally {
 			try {
@@ -496,9 +394,10 @@ public class MySQL implements iDriver {
 					query.get(queryID).close();
 				}
 			}catch (Exception e) {
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-				if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-					GiantBanks.log.log(Level.INFO, e.getMessage());
+				plugin.getLogger().log(Level.SEVERE, "Could not close database connection");
+				if(this.dbg) {
+					plugin.getLogger().log(Level.INFO, e.getMessage());
+					e.printStackTrace();
 				}
 			}
 		}
@@ -510,37 +409,6 @@ public class MySQL implements iDriver {
 	public HashMap<String, String> getSingleResult() {
 		Integer queryID = ((query.size() - 1 > 0) ? (query.size() - 1) : 0);
 		return this.getSingleResult(queryID);
-		
-		/*HashMap<String, String> data = new HashMap<String, String>();
-		try {
-			ResultSet res = query.get(queryID);
-			res.last();
-			while(res.next()) {
-				ResultSetMetaData rsmd = res.getMetaData();
-				int columns = rsmd.getColumnCount();
-				for(int i = 0; i < columns; i++) {
-					data.put(rsmd.getColumnName(i), res.getString(i));
-				}
-			}
-		}catch (SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not grab item data");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
-			}
-		} finally {
-			try {
-				if(query.get(queryID) != null) {
-					query.get(queryID).close();
-				}
-			}catch (Exception e) {
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-				if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-					GiantBanks.log.log(Level.INFO, e.getMessage());
-				}
-			}
-		}
-		
-		return data;*/
 	}
 	
 	@Override
@@ -557,9 +425,10 @@ public class MySQL implements iDriver {
 				}
 			}
 		}catch (SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not grab item data");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, "Could not grab item data");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		} finally {
 			try {
@@ -567,9 +436,10 @@ public class MySQL implements iDriver {
 					query.get(queryID).close();
 				}
 			}catch (Exception e) {
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-				if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-					GiantBanks.log.log(Level.INFO, e.getMessage());
+				plugin.getLogger().log(Level.SEVERE, "Could not close database connection");
+				if(this.dbg) {
+					plugin.getLogger().log(Level.INFO, e.getMessage());
+					e.printStackTrace();
 				}
 			}
 		}
@@ -996,9 +866,9 @@ public class MySQL implements iDriver {
 		return this;
 	}
 	
-	public static MySQL Obtain(HashMap<String, String> conf, String instance) {
+	public static MySQL Obtain(Plugin p, HashMap<String, String> conf, String instance) {
 		if(!MySQL.instance.containsKey(instance))
-			MySQL.instance.put(instance, new MySQL(conf));
+			MySQL.instance.put(instance, new MySQL(p, conf));
 		
 		return MySQL.instance.get(instance);
 	}

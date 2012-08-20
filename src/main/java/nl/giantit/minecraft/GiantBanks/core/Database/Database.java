@@ -1,6 +1,10 @@
 package nl.giantit.minecraft.GiantBanks.core.Database;
 
-import nl.giantit.minecraft.GiantBanks.core.Database.drivers.*;
+import nl.giantit.minecraft.GiantBanks.core.Database.drivers.MySQL;
+import nl.giantit.minecraft.GiantBanks.core.Database.drivers.SQLite;
+import nl.giantit.minecraft.GiantBanks.core.Database.drivers.iDriver;
+
+import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 
@@ -30,16 +34,16 @@ public class Database {
 	private iDriver dbDriver;
 	private dbType t;
 	
-	private Database(HashMap<String, String> conf, String instance) {
+	private Database(Plugin p, HashMap<String, String> conf, String instance) {
 		if(instance == null)
 			instance = "0";
 		
 		if(conf.get("driver").equalsIgnoreCase("MySQL")) {
 			t = dbType.MySQL;
-			this.dbDriver = MySQL.Obtain(conf, instance);
+			this.dbDriver = MySQL.Obtain(p, conf, instance);
 		}else{
 			t = dbType.SQLite;
-			this.dbDriver = SQLite.Obtain(conf, instance);
+			this.dbDriver = SQLite.Obtain(p, conf, instance);
 		}
 	}
 	
@@ -70,12 +74,12 @@ public class Database {
 		return Database.instance.get(instance);
 	}
 	
-	public static Database Obtain(String instance, HashMap<String, String> conf) {
+	public static Database Obtain(Plugin p, String instance, HashMap<String, String> conf) {
 		if(instance == null)
 			instance = "0";
 		
 		if(!Database.instance.containsKey(instance))
-			Database.instance.put(instance, new Database(conf, instance));
+			Database.instance.put(instance, new Database(p, conf, instance));
 		
 		return Database.instance.get(instance);
 	}

@@ -1,7 +1,8 @@
 package nl.giantit.minecraft.GiantBanks.core.Database.drivers;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.config;
+
+import org.bukkit.plugin.Plugin;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -22,7 +23,7 @@ import java.util.logging.Level;
 public class SQLite implements iDriver {
 	
 	private static HashMap<String, SQLite> instance = new HashMap<String, SQLite>();
-	private GiantBanks plugin;
+	private Plugin plugin;
 	
 	private ArrayList<HashMap<String, String>> sql = new ArrayList<HashMap<String, String>>();
 	private ArrayList<ResultSet> query = new ArrayList<ResultSet>();
@@ -30,31 +31,39 @@ public class SQLite implements iDriver {
 	
 	private String cur, db, host, port, user, pass, prefix;
 	private Connection con = null;
-	private config conf = null;
+	private Boolean dbg = false;
 	
-	private SQLite(HashMap<String, String> c) {
-		this.plugin = GiantBanks.getPlugin();
+	private Boolean parseBool(String s, Boolean d) {
+		if(s.equalsIgnoreCase("1") || s.equalsIgnoreCase("y") || s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("true"))
+			return true;
 		
-		this.conf = config.Obtain();
+		return d;
+	}
+	
+	private SQLite(Plugin p, HashMap<String, String> c) {
+		plugin = p;
 		
 		this.db = c.get("database");
 		this.prefix = c.get("prefix");
 		this.user = c.get("user");
 		this.pass = c.get("password");
+		this.dbg = (c.containsKey("debug")) ? this.parseBool(c.get("debug"), false) : false;
 
-		String dbPath = "jdbc:sqlite:" + plugin.getDir() + plugin.getSeparator() + this.db + ".db";
+		String dbPath = "jdbc:sqlite:" + plugin.getDataFolder() + java.io.File.separator + this.db + ".db";
 		try{
 			Class.forName("org.sqlite.JDBC");
 			this.con = DriverManager.getConnection(dbPath, this.user, this.pass);
 		}catch(SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + this.plugin.getName() + "] Failed to connect to database: SQL error!");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, "Failed to connect to database: SQL error!");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		}catch(ClassNotFoundException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + this.plugin.getName() + "] Failed to connect to database: SQLite library not found!");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, "Failed to connect to database: SQLite library not found!");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}
@@ -81,9 +90,10 @@ public class SQLite implements iDriver {
 
 			return res.next();
 		}catch (SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "]: Could not load table " + table);
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, " Could not load table " + table);
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
             return false;
 		} finally {
@@ -92,9 +102,10 @@ public class SQLite implements iDriver {
 					res.close();
 				}
 			}catch (Exception e) {
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "]: Could not close result connection to database");
-				if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-					GiantBanks.log.log(Level.INFO, e.getMessage());
+				plugin.getLogger().log(Level.SEVERE, " Could not close result connection to database");
+				if(this.dbg) {
+					plugin.getLogger().log(Level.INFO, e.getMessage());
+					e.printStackTrace();
 				}
 				return false;
 			}
@@ -136,7 +147,7 @@ public class SQLite implements iDriver {
 			sql.add(ad);
 			
 			if(debug == true)
-				GiantBanks.log.log(Level.INFO, "[" + plugin.getName() + "] " + sql.get(last).get("sql"));
+				plugin.getLogger().log(Level.INFO, sql.get(last).get("sql"));
 		}else{
 			last = sql.size() - 1;
 			try {
@@ -144,7 +155,7 @@ public class SQLite implements iDriver {
 				if(SQL.containsKey("sql")) {
 					if(SQL.containsKey("finalize")) {
 						if(true == debug)
-							GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] SQL syntax is finalized!");
+							plugin.getLogger().log(Level.SEVERE, " SQL syntax is finalized!");
 						return;
 					}else{
 						SQL.put("sql", SQL.get("sql") + string);
@@ -156,13 +167,13 @@ public class SQLite implements iDriver {
 					}
 				}else
 					if(true == debug)
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + last + " is not a valid SQL query!");
+						plugin.getLogger().log(Level.SEVERE, last + " is not a valid SQL query!");
 				
 				if(debug == true)
-					GiantBanks.log.log(Level.INFO, "[" + plugin.getName() + "] " + sql.get(last).get("sql"));
+					plugin.getLogger().log(Level.INFO, sql.get(last).get("sql"));
 			}catch(NullPointerException e) {
 				if(true == debug)
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + last + " is not a valid SQL query!");
+					plugin.getLogger().log(Level.SEVERE, "Query " + last + " could not be found!");
 			}
 		}
 			
@@ -191,7 +202,7 @@ public class SQLite implements iDriver {
 			if(SQL.containsKey("sql")) {
 				if(SQL.containsKey("finalize")) {
 					if(true == debug)
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] SQL syntax is finalized!");
+						plugin.getLogger().log(Level.SEVERE, " SQL syntax is finalized!");
 					return;
 				}else{
 					SQL.put("sql", SQL.get("sql") + string);
@@ -203,13 +214,13 @@ public class SQLite implements iDriver {
 				}
 			}else
 				if(true == debug)
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + add.toString() + " is not a valid SQL query!");
+					plugin.getLogger().log(Level.SEVERE, add.toString() + " is not a valid SQL query!");
 		
 			if(debug == true)
-				GiantBanks.log.log(Level.INFO, "[" + plugin.getName() + "] " + sql.get(last).get("sql"));
+				plugin.getLogger().log(Level.INFO, sql.get(last).get("sql"));
 		}catch(NullPointerException e) {
 			if(true == debug)
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + add.toString() + " is not a valid SQL query!");
+				plugin.getLogger().log(Level.SEVERE, "Query " + add.toString() + " could not be found!");
 		}
 		
 		return;
@@ -239,9 +250,10 @@ public class SQLite implements iDriver {
 						data.add(row);
 					}
 				}catch (SQLException e) {
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not execute query!");
-					if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-						GiantBanks.log.log(Level.INFO, e.getMessage());
+					plugin.getLogger().log(Level.SEVERE, " Could not execute query!");
+					if(this.dbg) {
+						plugin.getLogger().log(Level.INFO, e.getMessage());
+						e.printStackTrace();
 					}
 				} finally {
 					try {
@@ -249,18 +261,16 @@ public class SQLite implements iDriver {
 							st.close();
 						}
 					}catch (Exception e) {
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-						if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-							GiantBanks.log.log(Level.INFO, e.getMessage());
+						plugin.getLogger().log(Level.SEVERE, " Could not close database connection");
+						if(this.dbg) {
+							plugin.getLogger().log(Level.INFO, e.getMessage());
+							e.printStackTrace();
 						}
 					}
 				}
 			}
 		}catch(NullPointerException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + queryID.toString() + " is not a valid SQL query!");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
-			}
+			plugin.getLogger().log(Level.SEVERE, "Query " + queryID.toString() + " could not be found!");
 		}
 		
 		return data;
@@ -289,9 +299,10 @@ public class SQLite implements iDriver {
 						data.add(row);
 					}
 				}catch (SQLException e) {
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not execute query!");
-					if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-						GiantBanks.log.log(Level.INFO, e.getMessage());
+					plugin.getLogger().log(Level.SEVERE, " Could not execute query!");
+					if(this.dbg) {
+						plugin.getLogger().log(Level.INFO, e.getMessage());
+						e.printStackTrace();
 					}
 				} finally {
 					try {
@@ -299,15 +310,16 @@ public class SQLite implements iDriver {
 							st.close();
 						}
 					}catch (Exception e) {
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-						if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-							GiantBanks.log.log(Level.INFO, e.getMessage());
+						plugin.getLogger().log(Level.SEVERE, " Could not close database connection");
+						if(this.dbg) {
+							plugin.getLogger().log(Level.INFO, e.getMessage());
+							e.printStackTrace();
 						}
 					}
 				}
 			}
 		}catch(NullPointerException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + queryID.toString() + " is not a valid SQL query!");
+			plugin.getLogger().log(Level.SEVERE, "Query " + queryID.toString() + " could not be found!");
 		}
 		
 		return data;
@@ -325,9 +337,10 @@ public class SQLite implements iDriver {
 					st = con.createStatement();
 					st.executeUpdate(SQL.get("sql"));
 				}catch (SQLException e) {
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not execute query!");
-					if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-						GiantBanks.log.log(Level.INFO, e.getMessage());
+					plugin.getLogger().log(Level.SEVERE, " Could not execute query!");
+					if(this.dbg) {
+						plugin.getLogger().log(Level.INFO, e.getMessage());
+						e.printStackTrace();
 					}
 				} finally {
 					try {
@@ -335,15 +348,16 @@ public class SQLite implements iDriver {
 							st.close();
 						}
 					}catch (Exception e) {
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-						if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-							GiantBanks.log.log(Level.INFO, e.getMessage());
+						plugin.getLogger().log(Level.SEVERE, " Could not close database connection");
+						if(this.dbg) {
+							plugin.getLogger().log(Level.INFO, e.getMessage());
+							e.printStackTrace();
 						}
 					}
 				}
 			}
 		}catch(NullPointerException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + queryID.toString() + " is not a valid SQL query!");
+			plugin.getLogger().log(Level.SEVERE, "Query " + queryID.toString() + " could not be found!");
 		}
 	}
 	
@@ -358,9 +372,10 @@ public class SQLite implements iDriver {
 					st = con.createStatement();
 					st.executeUpdate(SQL.get("sql"));
 				}catch (SQLException e) {
-					GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not execute query!");
-					if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-						GiantBanks.log.log(Level.INFO, e.getMessage());
+					plugin.getLogger().log(Level.SEVERE, " Could not execute query!");
+					if(this.dbg) {
+						plugin.getLogger().log(Level.INFO, e.getMessage());
+						e.printStackTrace();
 					}
 				} finally {
 					try {
@@ -368,15 +383,16 @@ public class SQLite implements iDriver {
 							st.close();
 						}
 					}catch (Exception e) {
-						GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-						if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-							GiantBanks.log.log(Level.INFO, e.getMessage());
+						plugin.getLogger().log(Level.SEVERE, " Could not close database connection");
+						if(this.dbg) {
+							plugin.getLogger().log(Level.INFO, e.getMessage());
+							e.printStackTrace();
 						}
 					}
 				}
 			}
 		}catch(NullPointerException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] " + queryID.toString() + " is not a valid SQL query!");
+			plugin.getLogger().log(Level.SEVERE, "Query " + queryID.toString() + " could not be found!");
 		}
 	}
 	
@@ -393,9 +409,10 @@ public class SQLite implements iDriver {
 		
 			return row;
 		}catch (Exception e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not count rows for query (" + queryID.toString() + ")!");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, " Could not count rows for query (" + queryID.toString() + ")!");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		}
 		
@@ -413,9 +430,10 @@ public class SQLite implements iDriver {
 		
 			return row;
 		}catch (Exception e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not count rows for query (" + queryID.toString() + ")!");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, " Could not count rows for query (" + queryID.toString() + ")!");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		}
 		
@@ -440,9 +458,10 @@ public class SQLite implements iDriver {
 				data.add(row);
 			}
 		}catch (SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not grab item data");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, " Could not grab item data");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		} finally {
 			try {
@@ -450,9 +469,10 @@ public class SQLite implements iDriver {
 					query.get(queryID).close();
 				}
 			}catch (Exception e) {
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-				if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-					GiantBanks.log.log(Level.INFO, e.getMessage());
+				plugin.getLogger().log(Level.SEVERE, " Could not close database connection");
+				if(this.dbg) {
+					plugin.getLogger().log(Level.INFO, e.getMessage());
+					e.printStackTrace();
 				}
 			}
 		}
@@ -467,9 +487,10 @@ public class SQLite implements iDriver {
 			ResultSet res = query.get(queryID);
 			res.getRow();
 		}catch (SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not grab item data");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, " Could not grab item data");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		} finally {
 			try {
@@ -477,9 +498,10 @@ public class SQLite implements iDriver {
 					query.get(queryID).close();
 				}
 			}catch (Exception e) {
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-				if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-					GiantBanks.log.log(Level.INFO, e.getMessage());
+				plugin.getLogger().log(Level.SEVERE, " Could not close database connection");
+				if(this.dbg) {
+					plugin.getLogger().log(Level.INFO, e.getMessage());
+					e.printStackTrace();
 				}
 			}
 		}
@@ -503,9 +525,10 @@ public class SQLite implements iDriver {
 				}
 			}
 		}catch (SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not grab item data");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, " Could not grab item data");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		} finally {
 			try {
@@ -513,9 +536,10 @@ public class SQLite implements iDriver {
 					query.get(queryID).close();
 				}
 			}catch (Exception e) {
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-				if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-					GiantBanks.log.log(Level.INFO, e.getMessage());
+				plugin.getLogger().log(Level.SEVERE, " Could not close database connection");
+				if(this.dbg) {
+					plugin.getLogger().log(Level.INFO, e.getMessage());
+					e.printStackTrace();
 				}
 			}
 		}
@@ -537,9 +561,10 @@ public class SQLite implements iDriver {
 				}
 			}
 		}catch (SQLException e) {
-			GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not grab item data");
-			if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-				GiantBanks.log.log(Level.INFO, e.getMessage());
+			plugin.getLogger().log(Level.SEVERE, " Could not grab item data");
+			if(this.dbg) {
+				plugin.getLogger().log(Level.INFO, e.getMessage());
+				e.printStackTrace();
 			}
 		} finally {
 			try {
@@ -547,9 +572,10 @@ public class SQLite implements iDriver {
 					query.get(queryID).close();
 				}
 			}catch (Exception e) {
-				GiantBanks.log.log(Level.SEVERE, "[" + plugin.getName() + "] Could not close database connection");
-				if(conf.getBoolean(plugin.getName() + ".global.debug")) {
-					GiantBanks.log.log(Level.INFO, e.getMessage());
+				plugin.getLogger().log(Level.SEVERE, " Could not close database connection");
+				if(this.dbg) {
+					plugin.getLogger().log(Level.INFO, e.getMessage());
+					e.printStackTrace();
 				}
 			}
 		}
@@ -972,9 +998,9 @@ public class SQLite implements iDriver {
 		return this;
 	}
 	
-	public static SQLite Obtain(HashMap<String, String> conf, String instance) {
+	public static SQLite Obtain(Plugin p, HashMap<String, String> conf, String instance) {
 		if(!SQLite.instance.containsKey(instance))
-			SQLite.instance.put(instance, new SQLite(conf));
+			SQLite.instance.put(instance, new SQLite(p, conf));
 		
 		return SQLite.instance.get(instance);
 	}
