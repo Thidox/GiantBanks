@@ -1,7 +1,5 @@
 package nl.giantit.minecraft.GiantBanks.core.Database.drivers;
 
-import nl.giantit.minecraft.GiantBanks.GiantBanks;
-
 import org.bukkit.plugin.Plugin;
 
 import java.sql.Connection;
