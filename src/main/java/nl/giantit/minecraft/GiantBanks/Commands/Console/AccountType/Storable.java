@@ -8,10 +8,8 @@ import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages.msgType;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Misc;
 import nl.giantit.minecraft.GiantBanks.core.Tools.Register;
-import nl.giantit.minecraft.GiantBanks.core.perms.Permission;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 

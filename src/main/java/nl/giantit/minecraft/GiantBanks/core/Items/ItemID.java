@@ -1,6 +1,5 @@
 package nl.giantit.minecraft.GiantBanks.core.Items;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**

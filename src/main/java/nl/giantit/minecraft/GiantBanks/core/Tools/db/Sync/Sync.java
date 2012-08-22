@@ -154,6 +154,8 @@ public class Sync {
 					}, 5L);
 				}
 				break;
+			default:
+				break;
 		}
 	}
 	

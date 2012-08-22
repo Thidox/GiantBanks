@@ -1,7 +1,6 @@
 package nl.giantit.minecraft.GiantBanks.core.Tools.db;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
-import nl.giantit.minecraft.GiantBanks.core.config;
 import nl.giantit.minecraft.GiantBanks.core.Database.drivers.iDriver;
 import nl.giantit.minecraft.GiantBanks.core.Updater.UpdateType;
 

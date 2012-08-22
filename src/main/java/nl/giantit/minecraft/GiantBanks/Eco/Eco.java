@@ -17,7 +17,6 @@ public class Eco {
 		AECO,
 		CRAFTCONOMY,
 		CURRENCYCORE,
-		ECONXP,
 		ESSENTIALS,
 		MCMONEY,
 		MINECONOMY,
@@ -154,6 +153,8 @@ public class Eco {
 			case MATERIALS:
 				//Materials
 				Engine = new Material_Engine(this.plugin);
+				break;
+			default:
 				break;
 		}
 	}
