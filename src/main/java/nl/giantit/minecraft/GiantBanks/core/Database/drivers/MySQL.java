@@ -74,7 +74,7 @@ public class MySQL implements iDriver {
 	@Override
 	public void close() {
 		try {
-			if(!con.isClosed() || !con.isValid(0))
+			if(null == con || !con.isClosed() || !con.isValid(0))
 				return;
 			
 			this.con.close();
@@ -252,7 +252,7 @@ public class MySQL implements iDriver {
 			HashMap<String, String> SQL = sql.get(queryID);
 			if(SQL.containsKey("sql")) {
 				try {
-					if(con.isClosed() || !con.isValid(0))
+					if(null == con || con.isClosed() || !con.isValid(0))
 						this.connect();
 					
 					st = con.createStatement();
@@ -309,7 +309,7 @@ public class MySQL implements iDriver {
 			HashMap<String, String> SQL = sql.get(queryID);
 			if(SQL.containsKey("sql")) {
 				try {
-					if(con.isClosed() || !con.isValid(0))
+					if(null == con || con.isClosed() || !con.isValid(0))
 						this.connect();
 					
 					st = con.createStatement();
