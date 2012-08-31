@@ -3,6 +3,7 @@ package nl.giantit.minecraft.GiantBanks.core.Updater;
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.core.config;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Heraut;
+import nl.giantit.minecraft.GiantBanks.core.Updater.Config.confUpdate;
 import nl.giantit.minecraft.GiantBanks.core.Updater.Database.dbUpdate;
 
 import java.net.URL;
@@ -41,16 +42,13 @@ public class Updater {
 	
 	public Updater(GiantBanks plugin) {
 		this.plugin = plugin;
-		if(conf.getBoolean("GiantBanks.Updater.checkForUpdates")) {
+		if(conf.getBoolean("GiantBanks.Updater.checkForUpdates", false)) {
 			this.start();
 		}
 	}
 	
 	public void Update(UpdateType t) {
 		switch(t) {
-			case CONFIG:
-				//Config.Update();
-				break;
 			case DATABASE:
 				dbUpdate.Update();
 				break;
@@ -66,6 +64,17 @@ public class Updater {
 			default:
 				break;
 		}
+	}
+	
+	public iUpdater getUpdater(UpdateType t) {
+		switch(t) {
+			case CONFIG:
+				return new confUpdate();
+			default:
+				break;
+		}
+		
+		return null;
 	}
 	
 	public void stop() {

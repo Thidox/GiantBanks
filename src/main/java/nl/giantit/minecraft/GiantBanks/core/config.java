@@ -1,10 +1,15 @@
 package nl.giantit.minecraft.GiantBanks.core;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
+import nl.giantit.minecraft.GiantBanks.core.Updater.UpdateType;
+import nl.giantit.minecraft.GiantBanks.core.Updater.Config.confUpdate;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import com.google.common.io.Files;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -18,25 +23,37 @@ public class config {
 	
 	private static config instance = null;
 	private HashMap<String, Object> conf = new HashMap<String, Object>();
-	
+
+	private GiantBanks plugin;
 	private YamlConfiguration c;
 	private File file;
-	private double yamlVersion = 0.1;
+	private double version = 0.2;
 	
-	private config() {
+	private config(GiantBanks p) {
+		this.plugin = p;
 	}
 	
 	public void loadConfig(File file) {
 		this.file = file;
 		this.c = YamlConfiguration.loadConfiguration(this.file);
 		
-		double v = this.getDouble(GiantBanks.getPlugin().getName() + ".global.version");
-		if(v < this.yamlVersion) {
-			GiantBanks.getPlugin().getLogger().log(Level.INFO, "Your conf.yml has ran out of date. Updating now!");
-			File oconfigFile = new File(GiantBanks.getPlugin().getDir(), "conf.yml." + v + ".bak");
-			this.file.renameTo(oconfigFile);
-			GiantBanks.getPlugin().extract("conf.yml");
-			this.c = YamlConfiguration.loadConfiguration(this.file);
+		double v = this.getDouble(plugin.getName() + ".global.version");
+		if(v < this.version) {
+			confUpdate cU = (confUpdate) plugin.getUpdater().getUpdater(UpdateType.CONFIG);
+			File oconfigFile = new File(plugin.getDir(), "conf.yml." + v + ".bak");
+			try {
+				Files.copy(file, oconfigFile);
+				cU.Update(v, c);
+				
+				this.c = YamlConfiguration.loadConfiguration(new File(plugin.getDir(), "conf.yml"));
+			}catch(IOException e) {
+				plugin.getLogger().severe("Failed to update config file!");
+				if(c.getBoolean("GiantShop.global.debug", true) == true) {
+					e.printStackTrace();
+				}
+			}
+			
+			//plugin.extract("conf.yml");
 		}
 	}
 	
@@ -52,6 +69,10 @@ public class config {
 		return this.c.getBoolean(setting, false);
 	}
 	
+	public Boolean getBoolean(String setting, Boolean b) {
+		return null != this.c ? this.c.getBoolean(setting, b) : b;
+	}
+	
 	public Integer getInt(String setting) {
 		return this.c.getInt(setting, 0);
 	}
@@ -64,7 +85,7 @@ public class config {
 		HashMap<String, Object> m = new HashMap<String, Object>();
 		Set<String> t = c.getConfigurationSection(setting).getKeys(false);
 		if(t == null) {
-			GiantBanks.getPlugin().getLogger().log(Level.SEVERE, "Section " + setting + " was not found in the conf.yml! It might be broken...");
+			plugin.getLogger().log(Level.SEVERE, "Section " + setting + " was not found in the conf.yml! It might be broken...");
 		}
 		
 		for(String i : t) {
@@ -74,9 +95,16 @@ public class config {
 		return m;
 	}
 	
+	public static config Obtain(GiantBanks p) {
+		if(config.instance == null)
+			config.instance = new config(p);
+		
+		return config.instance;
+	}
+	
 	public static config Obtain() {
 		if(config.instance == null)
-			config.instance = new config();
+			config.instance = new config(GiantBanks.getPlugin());
 		
 		return config.instance;
 	}
