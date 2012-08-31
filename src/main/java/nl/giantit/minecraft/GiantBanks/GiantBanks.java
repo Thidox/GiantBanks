@@ -5,6 +5,7 @@ import nl.giantit.minecraft.GiantBanks.Commands.ConsoleExecutor;
 import nl.giantit.minecraft.GiantBanks.core.config;
 import nl.giantit.minecraft.GiantBanks.core.Database.Database;
 import nl.giantit.minecraft.GiantBanks.core.Items.Items;
+import nl.giantit.minecraft.GiantBanks.core.Metrics.MetricsHandler;
 import nl.giantit.minecraft.GiantBanks.core.Misc.Messages;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbHandler;
 import nl.giantit.minecraft.GiantBanks.core.Tools.db.dbInit;
@@ -21,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +48,8 @@ public class GiantBanks extends JavaPlugin {
 	//private Eco econHandler;
 	private Messages msgHandler;
 	//private Locationer locHandler;
+	private MetricsHandler metrics;
+	
 	private int tID;
 	private String name, dir, pubName;
 	private String bName = "Dirty Banker";
@@ -77,9 +81,10 @@ public class GiantBanks extends JavaPlugin {
 			extractDefaultFile("conf.yml");
 		}
 		
-		config conf = config.Obtain();
+		config conf = config.Obtain(this);
 		
 		try {
+			this.updHandler = new Updater(this); // Dirty fix for NPE
 			conf.loadConfig(configFile);
 			pubName = conf.getString(this.name + ".global.name");
 			
@@ -109,6 +114,9 @@ public class GiantBanks extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new nl.giantit.minecraft.GiantBanks.Listeners.PlayerListener(this), this);
 			//getServer().getPluginManager().registerEvents(new ServerListener(this), this);
 			
+			if(conf.getBoolean(this.name + ".metrics.useMetrics")) {
+				this.metrics = new MetricsHandler(this);
+			}
 		}catch(Exception e) {
 			log.log(Level.SEVERE, "[" + this.name + "](" + this.bName + ") Failed to load!");
 			if(conf.getBoolean(this.name + ".global.debug")) {
@@ -214,6 +222,10 @@ public class GiantBanks extends JavaPlugin {
 		extractDefaultFile(file);
 	}
 	
+	public void extract(File file, InputStream input) {
+		extractDefaultFile(file, input);
+	}
+	
 	public static GiantBanks getPlugin() {
 		return GiantBanks.plugin;
 	}
@@ -256,6 +268,52 @@ public class GiantBanks extends JavaPlugin {
 						Server.getPluginManager().disablePlugin(this);
 						log.log(Level.SEVERE, "[" + name + "] AAAAAAH!!! Severe error!!", e);
 					}
+				}
+			}
+		}
+	}
+	
+	private void extractDefaultFile(File file, InputStream input) {
+		if (!file.exists()) {
+			try {
+			 file.createNewFile();
+			}catch(IOException e) {
+				log.log(Level.SEVERE, "[" + name + "] Can't extract the requested file!!", e);
+			}
+		}
+		if (input != null) {
+			FileOutputStream output = null;
+
+			try {
+				output = new FileOutputStream(file);
+				byte[] buf = new byte[8192];
+				int length = 0;
+
+				while ((length = input.read(buf)) > 0) {
+					output.write(buf, 0, length);
+				}
+
+				log.log(Level.INFO, "[" + name + "] copied default file: " + file);
+			} catch (Exception e) {
+				Server.getPluginManager().disablePlugin(this);
+				log.log(Level.SEVERE, "[" + name + "] AAAAAAH!!! Can't extract the requested file!!", e);
+				return;
+			} finally {
+				try {
+					if (input != null) {
+						input.close();
+					}
+				} catch (Exception e) {
+					Server.getPluginManager().disablePlugin(this);
+					log.log(Level.SEVERE, "[" + name + "] AAAAAAH!!! Severe error!!", e);	
+				}
+				try {
+					if (output != null) {
+						output.close();
+					}
+				} catch (Exception e) {
+					Server.getPluginManager().disablePlugin(this);
+					log.log(Level.SEVERE, "[" + name + "] AAAAAAH!!! Severe error!!", e);
 				}
 			}
 		}
