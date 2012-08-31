@@ -46,9 +46,27 @@ public class confUpdate implements iUpdater {
 		section.put("taking", true);
 		c.createSection("GiantBanks.log.log.useraccount.item", section);
 		
-		ConfigurationSection cS = c.createSection("GiantBanks.Updater");
-		cS.set("checkForUpdates", c.get("GiantBanks.global.debug"));
-		cS.set("broadcast", true);
+		section = new HashMap<String, Boolean>();
+		section.put("checkForUpdates", c.getBoolean("GiantBanks.global.checkForUpdates"));
+		section.put("broadcast", true);
+		c.createSection("GiantBanks.Updater", section);
+		
+		c.set("GiantBanks.global.checkForUpdates", null);
+		c.set("GiantBanks.broadcast", null);
+		
+		section = new HashMap<String, Boolean>();
+		section.put("useMetrics", true);
+		c.createSection("GiantBanks.metrics", section);
+		
+		section = new HashMap<String, Boolean>();
+		section.put("database", true);
+		section.put("updater", true);
+		section.put("logging", true);
+		section.put("cache", true);
+		section.put("permEngine", true);
+		section.put("ecoEngine", true);
+		section.put("gbl", true);
+		c.createSection("GiantBanks.metrics.send", section);
 		
 		c.set("GiantBanks.global.version", 0.2);
 		
