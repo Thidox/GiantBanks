@@ -2,7 +2,7 @@ Basics:
 	* Make commands
 	    - Help command
 	        - Send help
-	        - Add required entries
+	        - Add required entries - sort of done
 	    - Adding to account - done
 	       - Needs to take from player still - done
 	    - Taking from account - done
@@ -48,8 +48,13 @@ Advanced: - On halt untill after basics done
 	    
 	* Add available message params to Messages debugging.
 	
+	* Implement Metrics - done
+	
 Possibles: - On halt untill after basics done
     * Add language support?
+    
+    * Create better support for multi server inventories. - done
+        - Disable caching for best results!
 	
 Testing:
 	* Testing, testing and more testing! - Never finished!
