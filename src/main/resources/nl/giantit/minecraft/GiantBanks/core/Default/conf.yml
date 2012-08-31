@@ -7,6 +7,16 @@ GiantBanks:
     Updater:
         checkForUpdates: true
         broadcast: true
+    metrics:
+        useMetrics: true
+        send:
+            database: true
+            updater: true
+            logging: true
+            cache: true
+            permEngine: true
+            ecoEngine: true
+            gbl: true
     log:
         useLogging: true
         log:
@@ -26,8 +36,6 @@ GiantBanks:
         usePermissions: true
         opHasPerms: true
         Engine: SPERM
-    broadcast:
-        gift: true
     db:
         driver: SQLite
         database: GiantBanks
@@ -56,10 +64,10 @@ GiantBanks:
             Worlds:
                 disableOffList: true
                 protected:
-                - world1
+                - world
                 allowed:
-                - world1
+                - world
             Commands:
             - store
             - get
-            - list
+            - have
