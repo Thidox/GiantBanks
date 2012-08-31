@@ -3,7 +3,6 @@ package nl.giantit.minecraft.GiantBanks.core.Updater.Config;
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
 import nl.giantit.minecraft.GiantBanks.core.Updater.iUpdater;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.ByteArrayInputStream;
