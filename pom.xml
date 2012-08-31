@@ -6,10 +6,20 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>GiantBanks</name>
 	
+	<scm>
+		<url>https://github.com/Thidox/GiantBanks</url>
+		<connection>scm:git:git@github.com:Thidox/GiantBanks.git</connection>
+		<developerConnection>scm:git:git@github.com:Thidox/GiantBanks.git</developerConnection>
+	</scm>
+	
 	<repositories>
 		<repository>
 			<id>bukkit-repo</id>
 			<url>http://repo.bukkit.org/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>essentials-repo</id>
+			<url>http://ess.ementalo.com/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
 	
@@ -79,7 +89,7 @@
 		<dependency>
 			<groupId>com.earth2me.essentials</groupId>
 			<artifactId>Essentials</artifactId>
-			<version>unknown</version>
+			<version>2.9.3</version>
 			<type>jar</type>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/Essentials.jar</systemPath>
@@ -175,19 +185,6 @@
 			<systemPath>${project.basedir}/lib/zPermissions-0.9.9.jar</systemPath>
 		</dependency>
 	</dependencies>
-
-	<distributionManagement>
-		<repository>
-			<id>gs-rel</id>
-			<name>GiantBanks Releases</name>
-			<url>file://D:/Users/Thierry/Documents/Dropbox/Public/minecraft/Craftbukkit/plugins/GiantBanks/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>gs-snap</id>
-			<name>GiantBanks Snapshots</name>
-			<url>file://D:/Users/Thierry/Documents/Dropbox/Public/minecraft/Craftbukkit/plugins/GiantBanks/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
 	
 	<build>
 		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
@@ -210,6 +207,7 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
