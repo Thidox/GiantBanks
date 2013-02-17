@@ -12,7 +12,7 @@ public class Create {
 	private static Items iH = GiantBanks.getPlugin().getItemHandler();
 	private static Messages mH = GiantBanks.getPlugin().getMsgHandler();
 
-	public static void exec(CommandSender p, String[] args) {
+	public static void exec(CommandSender s, String[] args) {
 		if(args.length > 3) {
 			String name = null;
 			int maxSlot = 20;
