@@ -1,6 +1,7 @@
 package nl.giantit.minecraft.GiantBanks.core.Misc;
 
 import nl.giantit.minecraft.GiantBanks.GiantBanks;
+import org.bukkit.ChatColor;
 
 import org.bukkit.entity.Player;
 import org.bukkit.command.CommandSender;
@@ -13,7 +14,7 @@ import org.bukkit.command.CommandSender;
 public class Heraut {
 		
 	public static String parse(String input) {
-        return input.replaceAll("(&([a-fA-F0-9]))", "§$2").replace("\\\\\u00A7", "&");
+       return ChatColor.translateAlternateColorCodes('&', input);
     }
 	
 	public static String clean(String input) {
