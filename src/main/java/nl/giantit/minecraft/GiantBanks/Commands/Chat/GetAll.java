@@ -31,7 +31,6 @@ public class GetAll {
 				String item = null;
 				int id = 0;
 				Integer type = null;
-				int amount = 0;
 				
 				for(int i = 1; i < args.length; i++) {
 					if(args[i].equalsIgnoreCase("-i")) {
@@ -143,7 +142,6 @@ public class GetAll {
 							//Give user his [amount] of item [item]
 							return;
 						}else{
-							String m = "";
 							HashMap<String, String> data = new HashMap<String, String>();
 							data.put("amount", String.valueOf(status));
 							data.put("item", item);
